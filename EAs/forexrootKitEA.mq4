@@ -10,12 +10,12 @@
 
 //External parameters
 extern int Slippage = 5;
-extern int StopLossMode = -1; //1 - Explicit
-extern int TakeProfitMode = -1; //1 - Explicit
-extern double StopLoss = 0; //Explicit Stop Loss in pips
-extern double TakeProfit = 0; //Explicit Take Profit in pips
-extern double MinLotSize = 0.01;
-extern int RiskStep = 100;
+extern int StopLossMode = -1;//StopLossMode | 1 - Explicit
+extern int TakeProfitMode = -1;//TakeProfitMode | 1 - Explicit
+extern double StopLoss = 0;//StopLoss in pips
+extern double TakeProfit = 0;//TakeProfit in pips
+extern double MinLotSize = 0.01;//MinLotSize
+extern int RiskStep = 100;//RiskStep
 
 //Global Variables
 double UsePoint;
