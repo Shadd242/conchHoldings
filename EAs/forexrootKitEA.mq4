@@ -14,8 +14,8 @@ extern int StopLossMode = -1; //1 - Explicit
 extern int TakeProfitMode = -1; //1 - Explicit
 extern double StopLoss = 0; //Explicit Stop Loss in pips
 extern double TakeProfit = 0; //Explicit Take Profit in pips
-double MinLotSize = 0.01;
-int RiskStep = 100;
+extern double MinLotSize = 0.01;
+extern int RiskStep = 100;
 
 //Global Variables
 double UsePoint;
