@@ -8,13 +8,13 @@
 #property strict
 
 //External parameters
-extern int slippage = 5;
+extern int slippage = 0;
 
-extern int stopLossMode = -1;//StopLossMode | -1 - Explicit
+extern int stopLossMode = 0;//StopLossMode | -1 - Explicit
 extern double buyStopLoss = 25;//Buy StopLoss in pips
 extern double sellStopLoss = 25;//Sell StopLoss in pips
 
-extern int takeProfitMode = -1;//TakeProfitMode | -1 - Explicit
+extern int takeProfitMode = 0;//TakeProfitMode | -1 - Explicit
 extern double buyTakeProfit = 25;//Buy take profit in pips
 extern double sellTakeProfit = 25;//Sell take profit in pips
 
@@ -106,8 +106,10 @@ double CalculateBuyStopLoss(int mode)
    switch(mode){
       case 0: //Get pips by atr
          returnValue = 0;
+         break;
       default:
          returnValue = buyStopLoss;
+         break;
    }
    return returnValue;
 }
@@ -129,8 +131,10 @@ double CalculateSellStopLoss(int mode)
    switch(mode){
       case 0: //Get pips by atr
          returnValue = 0;
+         break;
       default:
          returnValue = sellStopLoss;
+         break;
    }
    return returnValue;
 }
@@ -152,8 +156,10 @@ double CalculateBuyTakeProfit(int mode)
    switch(mode){
       case 0: //Get pips by atr
          returnValue = 0;
+         break;
       default:
          returnValue = buyTakeProfit;
+         break;
    }
    return returnValue;
 }
@@ -175,8 +181,10 @@ double CalculateSellTakeProfit(int mode)
    switch(mode){
       case 0: //Get pips by atr
          returnValue = 0;
+         break;
       default:
          returnValue = sellTakeProfit;
+         break;
    }
    return returnValue;
 }
