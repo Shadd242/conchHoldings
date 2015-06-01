@@ -11,12 +11,12 @@
 extern int slippage = 5;
 
 extern int stopLossMode = -1;//StopLossMode | -1 - Explicit
-extern double buyStopLoss = 250;//Buy StopLoss in pips
-extern double sellStopLoss = 250;//Sell StopLoss in pips
+extern double buyStopLoss = 25;//Buy StopLoss in pips
+extern double sellStopLoss = 25;//Sell StopLoss in pips
 
 extern int takeProfitMode = -1;//TakeProfitMode | -1 - Explicit
-extern double buyTakeProfit = 250;//Buy take profit in pips
-extern double sellTakeProfit = 250;//Sell take profit in pips
+extern double buyTakeProfit = 25;//Buy take profit in pips
+extern double sellTakeProfit = 25;//Sell take profit in pips
 
 //Need to make psMode
 extern int buyPS = 125;//Pip distance between buy orders
@@ -63,6 +63,12 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
+   if (canOpenBuy()){
+      openBuy();
+   }
+   if (canOpenSell()){
+      openSell();
+   }
    Comment("UsePoint: " + DoubleToString(UsePoint) + "\n" + 
            "UseSlippage: " + IntegerToString(UseSlippage));
   }
