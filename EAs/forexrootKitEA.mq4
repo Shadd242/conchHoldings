@@ -10,11 +10,11 @@
 //External parameters
 extern int slippage = 0;
 
-extern int stopLossMode = 0;//StopLossMode | -1 - Explicit
+extern int stopLossMode = -1;//StopLossMode | -1 & 0 - Explicit - 0
 extern double buyStopLoss = 25;//Buy StopLoss in pips
 extern double sellStopLoss = 25;//Sell StopLoss in pips
 
-extern int takeProfitMode = 0;//TakeProfitMode | -1 - Explicit
+extern int takeProfitMode = -1;//TakeProfitMode | -1 & 0 - Explicit
 extern double buyTakeProfit = 25;//Buy take profit in pips
 extern double sellTakeProfit = 25;//Sell take profit in pips
 
@@ -24,8 +24,8 @@ extern int sellPS = 125;//Pip distance between sell orders
 
 extern double minLotSize = 0.01;//Min lot size
 
-extern int buyRiskStep = 100;//Buy RiskStep
-extern int sellRiskStep = 100;//Sell RiskStep
+extern int buyRiskStep = 1000;//Buy RiskStep
+extern int sellRiskStep = 1000;//Sell RiskStep
 
 extern double maxLotSize = 20;//Max lot size
 
@@ -69,6 +69,11 @@ void OnTick()
    if (canOpenSell()){
       openSell();
    }
+   if (takeProfitMode > -1){
+      closeSellOrdersInProfit();
+      closeBuyOrdersInProfit();
+   }
+   
    Comment("UsePoint: " + DoubleToString(UsePoint) + "\n" + 
            "UseSlippage: " + IntegerToString(UseSlippage));
   }
@@ -94,24 +99,17 @@ int GetSlippaage(string Currency, int SlippagePips)
 //-----BUY Stop Loss
 
 double GetBuyStopLoss(double OpenPrice){
-   double BuyStopLoss = 0;
-   double sl = CalculateBuyStopLoss(stopLossMode);
-   if(sl > 0) BuyStopLoss = OpenPrice - (sl * UsePoint);
-   return BuyStopLoss;
-}
-
-double CalculateBuyStopLoss(int mode)
-{
-   double returnValue = 0;
-   switch(mode){
-      case 0: //Get pips by atr
-         returnValue = 0;
-         break;
+   double _buyStopLoss = OpenPrice - (buyStopLoss * UsePoint);
+   switch(stopLossMode){
+      case 0:
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return (buyStopLoss * UsePoint);
+         }         
       default:
-         returnValue = buyStopLoss;
-         break;
+         return _buyStopLoss;
    }
-   return returnValue;
 }
 
 //-----BUY Stop Loss
@@ -119,24 +117,17 @@ double CalculateBuyStopLoss(int mode)
 //-----Sell Stop Loss
 
 double GetSellStopLoss(double OpenPrice){
-   double SellStopLoss = 0;
-   double sl = CalculateSellStopLoss(stopLossMode);
-   if(sl > 0) SellStopLoss = OpenPrice + (sl * UsePoint);
-   return SellStopLoss;
-}
-
-double CalculateSellStopLoss(int mode)
-{
-   double returnValue = 0;
-   switch(mode){
-      case 0: //Get pips by atr
-         returnValue = 0;
-         break;
-      default:
-         returnValue = sellStopLoss;
-         break;
+   double _sellStopLoss = OpenPrice + (sellStopLoss * UsePoint);
+   switch(stopLossMode){
+      case 0:
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return (sellStopLoss * UsePoint);
+         }         
+      default:         
+         return _sellStopLoss;
    }
-   return returnValue;
 }
 
 //-----Sell Stop Loss
@@ -144,24 +135,17 @@ double CalculateSellStopLoss(int mode)
 //-----BUY Take Profit
 
 double GetBuyTakeProfit(double OpenPrice){
-   double BuyTakeProfit = 0;
-   double tp = CalculateBuyTakeProfit(takeProfitMode);
-   if(tp > 0) BuyTakeProfit = OpenPrice + (tp * UsePoint);
-   return BuyTakeProfit;
-}
-
-double CalculateBuyTakeProfit(int mode)
-{
-   double returnValue = 0;
-   switch(mode){
-      case 0: //Get pips by atr
-         returnValue = 0;
-         break;
+   double _buyTakeProfit = OpenPrice + (buyTakeProfit * UsePoint);
+   switch(takeProfitMode){
+      case 0:
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return (buyTakeProfit * UsePoint);
+         } 
       default:
-         returnValue = buyTakeProfit;
-         break;
+         return _buyTakeProfit; 
    }
-   return returnValue;
 }
 
 //-----BUY Take Profit
@@ -169,24 +153,17 @@ double CalculateBuyTakeProfit(int mode)
 //-----SELL Take Profit
 
 double GetSellTakeProfit(double OpenPrice){
-   double SellTakeProfit = 0;
-   double tp = CalculateSellTakeProfit(takeProfitMode);
-   if(tp > 0) SellTakeProfit = OpenPrice - (tp * UsePoint);
-   return SellTakeProfit;
-}
-
-double CalculateSellTakeProfit(int mode)
-{
-   double returnValue = 0;
-   switch(mode){
-      case 0: //Get pips by atr
-         returnValue = 0;
-         break;
+   double _sellTakeProfit = OpenPrice - (sellTakeProfit * UsePoint);
+   switch(takeProfitMode){
+      case 0:
+         if (OpenPrice > 0){
+            return 0;
+         }else{
+            return (sellTakeProfit * UsePoint);
+         }  
       default:
-         returnValue = sellTakeProfit;
-         break;
+         return _sellTakeProfit;  
    }
-   return returnValue;
 }
 
 //-----SELL Take Profit
@@ -253,7 +230,12 @@ void openBuy() {
           buy_global_min = OrderOpenPrice();
       }
    } else {
-      Print("Error opening BUY order : lots = " + DoubleToString(buy_lots), GetLastError()); 
+      Print("Error opening BUY order : lots = " + DoubleToString(buy_lots),
+      " : takeprofit = " + DoubleToString(takeprofit),
+      " : stoploss = " + DoubleToString(stoploss),
+      " : buy_lots = " + DoubleToString(buy_lots),
+      " : ask = " + DoubleToString(Ask),
+      GetLastError()); 
       //return(-1);
    }
 }
@@ -276,7 +258,13 @@ void openSell() {
          sell_global_max = OrderOpenPrice();
       }
    } else {
-      Print("Error opening SELL order : lots = " + DoubleToString(sell_lots), GetLastError()); 
+      Print("Error opening SELL order : lots = " + DoubleToString(sell_lots), 
+            " : takeprofit = " + DoubleToString(takeprofit),
+            " : stoploss = " + DoubleToString(stoploss),
+            " : sell_lots = " + DoubleToString(sell_lots),
+            " : bid = " + DoubleToString(Bid),
+            GetLastError()); 
+
       //return(-1);
    }
 }
@@ -330,4 +318,48 @@ double getBuyMinTrade() {
         }
     }
     return (min);
+}
+
+void closeBuyOrdersInProfit() {
+    RefreshRates();
+    int totalOrders = OrdersTotal();
+    for(int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderType() == OP_BUY && OrderSymbol() == Symbol()) {
+            while (IsTradeContextBusy()) Sleep(10);
+            RefreshRates();
+            bool closed = false;
+            double takeprofit;
+            bool timeToClose = false;
+            takeprofit = OrderOpenPrice() + GetBuyTakeProfit(0);
+            if (Bid >= takeprofit) {
+                closed = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Violet);
+                if (!closed) {
+                    Print("Error closing order in profit - BUY: " + IntegerToString(OrderTicket()) + ", lots: " + DoubleToString(OrderLots()) + " " + IntegerToString(GetLastError()));   
+                }
+            }
+        }
+    }
+    //return(0);
+}
+
+void closeSellOrdersInProfit() {
+    RefreshRates();
+    int totalOrders = OrdersTotal();
+    for(int i = 0; i < totalOrders; i++) {
+        double os =OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderType() == OP_SELL && OrderSymbol() == Symbol()) {
+            while (IsTradeContextBusy()) Sleep(10);
+            RefreshRates();
+            bool closed = false;
+            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0);;
+            if (Ask <= takeprofit) {
+               closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
+               if (!closed) {
+                   Print("Error closing order in profit - SELL: " + IntegerToString(OrderTicket()) + ", lots: " + DoubleToString(OrderLots()) + " " + IntegerToString(GetLastError()));   
+               }
+            }
+        }
+    }
+    //return(0);
 }
