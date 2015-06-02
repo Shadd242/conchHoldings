@@ -10,17 +10,17 @@
 //External parameters
 extern int slippage = 0;
 
-extern int stopLossMode = -1;//StopLossMode | -1 & 0 - Explicit - 0
+extern int stopLossMode = 0;//StopLossMode | -1 & 0 - Explicit - 0
 extern double buyStopLoss = 25;//Buy StopLoss in pips
 extern double sellStopLoss = 25;//Sell StopLoss in pips
 
-extern int takeProfitMode = -1;//TakeProfitMode | -1 & 0 - Explicit
+extern int takeProfitMode = 0;//TakeProfitMode | -1 & 0 - Explicit
 extern double buyTakeProfit = 25;//Buy take profit in pips
 extern double sellTakeProfit = 25;//Sell take profit in pips
 
 //Need to make psMode
-extern int buyPS = 125;//Pip distance between buy orders
-extern int sellPS = 125;//Pip distance between sell orders
+extern int buyPS = 25;//Pip distance between buy orders
+extern int sellPS = 25;//Pip distance between sell orders
 
 extern double minLotSize = 0.01;//Min lot size
 
@@ -28,6 +28,15 @@ extern int buyRiskStep = 1000;//Buy RiskStep
 extern int sellRiskStep = 1000;//Sell RiskStep
 
 extern double maxLotSize = 20;//Max lot size
+
+
+extern int sellEmptyOrderMode = 0; //sellEmptyOrderMode 0 - Market | 1 - LIMIT | 2 - STOP
+extern int buyEmptyOrderMode = 0; //buyEmptyOrderMode 0 - Market | 1 - LIMIT | 2 - STOP
+
+extern double sellLimitBuffer = 50;//sellLimitBuffer pip distance
+extern double sellStopBuffer = 50;//sellStopBuffer pip distance
+extern double buyLimitBuffer = 50;//buyLimitBuffer pip distance
+extern double buyStopBuffer = 50;//buyStopBuffer pip distance
 
 //Global Variables
 double UsePoint;
@@ -64,10 +73,46 @@ void OnTick()
   {
 //---
    if (canOpenBuy()){
-      openBuy();
+      switch(buyEmptyOrderMode){
+         case 1:
+            if(getBuyTradeCount(OP_BUYLIMIT) == 0){
+               openBuy(OP_BUYLIMIT);
+            }else{
+               openBuy(OP_BUY);
+            }
+            break;
+         case 2:
+            if(getBuyTradeCount(OP_BUYSTOP) == 0){
+               openBuy(OP_BUYSTOP);
+            }else{
+               openBuy(OP_BUY);
+            }
+            break;
+         default:
+            openBuy(OP_BUY);
+            break;
+      }
    }
    if (canOpenSell()){
-      openSell();
+      switch(sellEmptyOrderMode){
+         case 1:
+            if(getSellTradeCount(OP_SELLLIMIT) == 0){
+               openSell(OP_SELLLIMIT);
+            }else{
+               openSell(OP_SELL);
+            }
+            break;
+         case 2:
+            if(getSellTradeCount(OP_SELLSTOP) == 0){
+               openSell(OP_SELLSTOP);
+            }else{
+               openSell(OP_SELL);
+            }
+            break;
+         default:
+            openSell(OP_SELL);
+            break;
+      }
    }
    if (takeProfitMode > -1){
       closeSellOrdersInProfit();
@@ -212,17 +257,18 @@ double getSellLotSize() {
     return (result);
 }
 
-void openBuy() {
+void openBuy(int inBuyOrderType) {
    Print("Setting up BUY");
    while (IsTradeContextBusy()) {
       Print("Trade Context Busy - BUY");
       Sleep(10);
    }
    RefreshRates();
-   double takeprofit = GetBuyTakeProfit(Ask);
-   double stoploss = GetBuyStopLoss(Ask);
+   double orderPrice = getBuyOrderPrice(inBuyOrderType);
+   double takeprofit = GetBuyTakeProfit(orderPrice);
+   double stoploss = GetBuyStopLoss(orderPrice);
    double buy_lots = getBuyLotSize();
-   int ticket = OrderSend(Symbol(), OP_BUY, buy_lots, Ask, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 10000, 0, Blue);
+   int ticket = OrderSend(Symbol(), inBuyOrderType, buy_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 10000, 0, Blue);
    //Print("ticket: " + ticket + " | takeprofit: " + takeprofit);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
@@ -234,23 +280,24 @@ void openBuy() {
       " : takeprofit = " + DoubleToString(takeprofit),
       " : stoploss = " + DoubleToString(stoploss),
       " : buy_lots = " + DoubleToString(buy_lots),
-      " : ask = " + DoubleToString(Ask),
+      " : ask = " + DoubleToString(orderPrice),
       GetLastError()); 
       //return(-1);
    }
 }
 
-void openSell() {
+void openSell(int inSellOrderType) {
    Print("Setting up SELL");
    while (IsTradeContextBusy()) {
       Print("Trade Context Busy - SELL");
       Sleep(10);
    }
    RefreshRates();
-   double takeprofit = GetSellTakeProfit(Bid);
-   double stoploss = GetSellStopLoss(Bid);
+   double orderPrice = getSellOrderPrice(inSellOrderType);
+   double takeprofit = GetSellTakeProfit(orderPrice);
+   double stoploss = GetSellStopLoss(orderPrice);
    double sell_lots = getSellLotSize();
-   int ticket = OrderSend(Symbol(), OP_SELL, sell_lots, Bid, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 20000, 0, Red);
+   int ticket = OrderSend(Symbol(), inSellOrderType, sell_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 20000, 0, Red);
    //Print("ticket: " + ticket + " | takeprofit: " + takeprofit);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
@@ -262,30 +309,90 @@ void openSell() {
             " : takeprofit = " + DoubleToString(takeprofit),
             " : stoploss = " + DoubleToString(stoploss),
             " : sell_lots = " + DoubleToString(sell_lots),
-            " : bid = " + DoubleToString(Bid),
+            " : bid = " + DoubleToString(orderPrice),
             GetLastError()); 
 
       //return(-1);
    }
 }
+double getSellOrderPrice(int inSellOrderType){
+   switch(inSellOrderType){
+      case OP_SELL:
+         return Bid;
+      case OP_SELLLIMIT:
+         return Bid + (sellLimitBuffer * UsePoint);
+      case OP_SELLSTOP:
+         return Bid - (sellStopBuffer * UsePoint);
+   }
+   return -1;
+}
+
+double getBuyOrderPrice(int inBuyOrderType){
+   switch(inBuyOrderType){
+      case OP_BUY:
+         return Ask;
+      case OP_BUYLIMIT:
+         return Ask - (buyLimitBuffer * UsePoint);
+      case OP_BUYSTOP:
+         return Ask + (buyStopBuffer * UsePoint);
+   }
+   return -1;
+}
 
 bool canOpenSell(){
-   double sell_psPoint = sellPS * Point;
-   double sell_max = getSellMaxTrade();
-   if (Bid >= sell_max + sell_psPoint) {
+   int totalOrders = OrdersTotal();
+   for (int i = 0; i < totalOrders; i++) {
+      double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+      if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL || 
+                                        OrderType() == OP_SELLLIMIT ||
+                                        OrderType() == OP_SELLSTOP)) {
+         double openPrice = OrderOpenPrice();
+         if (!canOpenSell(sellPS, openPrice)){
+            return false;
+         }
+      }
+   }
+   return true;
+}
+
+bool canOpenSell(double _sell_ps, double sell_price){
+   double sell_psPoint = _sell_ps;// * Point; 
+   if (MathAbs(Bid - sell_price) > (sell_psPoint * UsePoint)){
+      Print("canOpenSell: " + IntegerToString(true));
       return true;
    }
+   Print("canOpenSell: " + IntegerToString(false));
    return false;
 }
 
 bool canOpenBuy(){
-   double buy_psPoint = buyPS * Point;
-   double buy_min = getBuyMinTrade();
-   if (Ask <= buy_min - buy_psPoint) {
+   int totalOrders = OrdersTotal();
+   if (totalOrders > 0) {
+     for (int i = 0; i < totalOrders; i++) {
+         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+         if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY || 
+                                           OrderType() == OP_BUYLIMIT ||
+                                           OrderType() == OP_BUYSTOP)) {
+             double openPrice = OrderOpenPrice();
+             if (!canOpenBuy(buyPS, openPrice)){
+                  return false;               
+             }
+         }
+     }
+   }
+   return true;
+}
+
+bool canOpenBuy(double _buy_ps, double buy_price){
+   double buy_psPoint = _buy_ps;// * Point;
+   if (MathAbs(Ask - buy_price) > (buy_psPoint * UsePoint)){
+      Print("canOpenBuy: " + IntegerToString(true));
       return true;
    }
+   Print("canOpenBuy: " + IntegerToString(false));
    return false;
 }
+
 
 double getSellMaxTrade() {
     int totalOrders = OrdersTotal();
@@ -362,4 +469,76 @@ void closeSellOrdersInProfit() {
         }
     }
     //return(0);
+}
+
+int getTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol()) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getBuyTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY //|| 
+                                          //OrderType() == OP_BUYLIMIT ||
+                                          //OrderType() == OP_BUYSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getBuyTradeCount(int orderType) {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
+                                          //OrderType() == OP_BUYLIMIT ||
+                                          //OrderType() == OP_BUYSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getSellTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL //|| 
+                                          //OrderType() == OP_SELLLIMIT ||
+                                          //OrderType() == OP_SELLSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getSellTradeCount(int orderType) {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
+                                          //OrderType() == OP_SELLLIMIT ||
+                                          //OrderType() == OP_SELLSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
 }
