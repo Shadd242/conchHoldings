@@ -21,17 +21,42 @@
 //External parameters
 extern int slippage = 0;
 
-extern int stopLossMode = 0;//StopLossMode | -1 & 0 - Explicit - 0
+extern int stopLossMode = 1;//StopLossMode | -1 & 0 - Explicit | 1 - ATR
 extern double buyStopLoss = 250;//Buy StopLoss in pips
 extern double sellStopLoss = 250;//Sell StopLoss in pips
 
-extern int takeProfitMode = 0;//TakeProfitMode | -1 & 0 - Explicit
+extern int sellStopLossATRTimeFrame = PERIOD_D1;
+extern int sellStopLossATRPeriod = 30;
+extern int sellStopLossATRShift = 0;
+
+extern int buyStopLossATRTimeFrame = PERIOD_D1;
+extern int buyStopLossATRPeriod = 30;
+extern int buyStopLossATRShift = 0;
+
+
+extern int takeProfitMode = 1;//TakeProfitMode | -1 & 0 - Explicit | 1 - ATR
 extern double buyTakeProfit = 25;//Buy take profit in pips
 extern double sellTakeProfit = 25;//Sell take profit in pips
 
-//Need to make psMode
+extern int sellTakeProfitATRTimeFrame = PERIOD_D1;
+extern int sellTakeProfitATRPeriod = 30;
+extern int sellTakeProfitATRShift = 0;
+
+extern int buyTakeProfitATRTimeFrame = PERIOD_D1;
+extern int buyTakeProfitATRPeriod = 30;
+extern int buyTakeProfitATRShift = 0;
+
+extern int pipStepMode = 1;//pipStepMode | -1 - Explicit | 1 - ATR
 extern int buyPS = 100;//Pip distance between buy orders
 extern int sellPS = 100;//Pip distance between sell orders
+
+extern int sellPipStepATRTimeFrame = PERIOD_D1;
+extern int sellPipStepATRPeriod = 30;
+extern int sellPipStepATRShift = 0;
+
+extern int buyPipStepATRTimeFrame = PERIOD_D1;
+extern int buyPipStepATRPeriod = 30;
+extern int buyPipStepATRShift = 0;
 
 extern double minLotSize = 0.01;//Min lot size
 
@@ -48,6 +73,7 @@ extern double sellLimitBuffer = 50;//sellLimitBuffer pip distance
 extern double sellStopBuffer = 50;//sellStopBuffer pip distance
 extern double buyLimitBuffer = 50;//buyLimitBuffer pip distance
 extern double buyStopBuffer = 50;//buyStopBuffer pip distance
+
 
 //Global Variables
 double UsePoint;
@@ -164,7 +190,13 @@ double GetBuyStopLoss(double OpenPrice){
             return 0;
          }else{
             return (buyStopLoss * UsePoint);
-         }         
+         }
+      case 1:
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return getATR(buyStopLossATRTimeFrame,buyStopLossATRPeriod,buyStopLossATRShift);
+         }          
       default:
          return _buyStopLoss;
    }
@@ -182,7 +214,13 @@ double GetSellStopLoss(double OpenPrice){
             return 0;
          }else{
             return (sellStopLoss * UsePoint);
-         }         
+         }      
+      case 1:
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return getATR(sellStopLossATRTimeFrame,sellStopLossATRPeriod,sellStopLossATRShift);
+         }       
       default:         
          return _sellStopLoss;
    }
@@ -200,7 +238,13 @@ double GetBuyTakeProfit(double OpenPrice){
             return 0;
          }else{
             return (buyTakeProfit * UsePoint);
-         } 
+         }
+      case 1: 
+         if(OpenPrice > 0){
+            return 0;
+         }else{
+            return getATR(buyTakeProfitATRTimeFrame,buyTakeProfitATRPeriod,buyTakeProfitATRShift);
+         }      
       default:
          return _buyTakeProfit; 
    }
@@ -219,6 +263,12 @@ double GetSellTakeProfit(double OpenPrice){
          }else{
             return (sellTakeProfit * UsePoint);
          }  
+      case 1:
+         if (OpenPrice > 0){
+            return 0;
+         }else{
+            return getATR(buyTakeProfitATRTimeFrame,buyTakeProfitATRPeriod,buyTakeProfitATRShift);
+         }       
       default:
          return _sellTakeProfit;  
    }
@@ -360,7 +410,7 @@ bool canOpenSell(){
                                         OrderType() == OP_SELLLIMIT ||
                                         OrderType() == OP_SELLSTOP)) {
          double openPrice = OrderOpenPrice();
-         if (!canOpenSell(sellPS, openPrice)){
+         if (!canOpenSell(getSellPs(), openPrice)){
             return false;
          }
       }
@@ -370,7 +420,7 @@ bool canOpenSell(){
 
 bool canOpenSell(double _sell_ps, double sell_price){
    double sell_psPoint = _sell_ps;// * Point; 
-   if (MathAbs(Bid - sell_price) > (sell_psPoint * UsePoint)){
+   if (MathAbs(Bid - sell_price) > sell_psPoint){
       Print("canOpenSell: " + IntegerToString(true));
       return true;
    }
@@ -387,7 +437,7 @@ bool canOpenBuy(){
                                            OrderType() == OP_BUYLIMIT ||
                                            OrderType() == OP_BUYSTOP)) {
              double openPrice = OrderOpenPrice();
-             if (!canOpenBuy(buyPS, openPrice)){
+             if (!canOpenBuy(getBuyPs(), openPrice)){
                   return false;               
              }
          }
@@ -398,7 +448,7 @@ bool canOpenBuy(){
 
 bool canOpenBuy(double _buy_ps, double buy_price){
    double buy_psPoint = _buy_ps;// * Point;
-   if (MathAbs(Ask - buy_price) > (buy_psPoint * UsePoint)){
+   if (MathAbs(Ask - buy_price) > buy_psPoint){
       Print("canOpenBuy: " + IntegerToString(true));
       return true;
    }
@@ -600,4 +650,26 @@ double getBuyMinTrade() {
         }
     }
     return (min);
+}
+
+double getATR(int timeframe, int period, int shift) {
+   return iATR(NULL,timeframe,period,shift);
+}
+
+double getBuyPs(){
+   switch(pipStepMode){
+      case 0:
+         return getATR(buyPipStepATRTimeFrame,buyPipStepATRPeriod,buyPipStepATRShift);
+      default:
+         return buyPS * UsePoint;
+   }
+}
+
+double getSellPs(){
+   switch(pipStepMode){
+      case 0:
+         return getATR(sellPipStepATRTimeFrame,sellPipStepATRPeriod,sellPipStepATRShift);
+      default:
+         return sellPS * UsePoint;
+   }
 }
