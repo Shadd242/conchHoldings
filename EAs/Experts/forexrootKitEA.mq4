@@ -3,6 +3,7 @@
 //|                               Copyright 2015, Conchman Holdings. |
 //|                                              http://www.mql5.com |
 //+------------------------------------------------------------------+
+/**
 #import "forexrootKitToolsLib.ex4"
    int getSellTradeCount(int orderType);
    int getSellTradeCount();
@@ -12,6 +13,7 @@
    double getSellMaxTrade();
    double getBuyMinTrade();
 #import
+**/
 #property copyright "Copyright 2015, Conchman Holdings."
 #property link      "http://www.mql5.com"
 #property strict
@@ -20,8 +22,8 @@
 extern int slippage = 0;
 
 extern int stopLossMode = 0;//StopLossMode | -1 & 0 - Explicit - 0
-extern double buyStopLoss = 25;//Buy StopLoss in pips
-extern double sellStopLoss = 25;//Sell StopLoss in pips
+extern double buyStopLoss = 250;//Buy StopLoss in pips
+extern double sellStopLoss = 250;//Sell StopLoss in pips
 
 extern int takeProfitMode = 0;//TakeProfitMode | -1 & 0 - Explicit
 extern double buyTakeProfit = 25;//Buy take profit in pips
@@ -126,7 +128,6 @@ void OnTick()
    if (takeProfitMode > -1){
       closeSellOrdersInProfit();
       closeBuyOrdersInProfit();
-      
       closeSellOrdersInLoss();
       closeBuyOrdersInLoss();
    }
@@ -454,7 +455,9 @@ void closeSellOrdersInLoss() {
     int totalOrders = OrdersTotal();
     for(int i = 0; i < totalOrders; i++) {
         double os =OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderType() == OP_SELL && OrderSymbol() == Symbol()) {
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL || 
+                                          OrderType() == OP_SELLLIMIT ||
+                                          OrderType() == OP_SELLSTOP)) {
             while (IsTradeContextBusy()) Sleep(10);
             RefreshRates();
             bool closed = false;
@@ -475,7 +478,9 @@ void closeBuyOrdersInLoss() {
     int totalOrders = OrdersTotal();
     for(int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderType() == OP_BUY && OrderSymbol() == Symbol()) {
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY || 
+                                          OrderType() == OP_BUYLIMIT ||
+                                          OrderType() == OP_BUYSTOP)) {
             while (IsTradeContextBusy()) Sleep(10);
             RefreshRates();
             bool closed = false;
@@ -492,3 +497,107 @@ void closeBuyOrdersInLoss() {
     //return(0);
 }
 
+int getTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol()) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getBuyTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY //|| 
+                                          //OrderType() == OP_BUYLIMIT ||
+                                          //OrderType() == OP_BUYSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getBuyTradeCount(int orderType) {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
+                                          //OrderType() == OP_BUYLIMIT ||
+                                          //OrderType() == OP_BUYSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getSellTradeCount() {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL //|| 
+                                          //OrderType() == OP_SELLLIMIT ||
+                                          //OrderType() == OP_SELLSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+int getSellTradeCount(int orderType) {
+    int result = 0;
+    int totalOrders = OrdersTotal();
+    for (int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
+                                          //OrderType() == OP_SELLLIMIT ||
+                                          //OrderType() == OP_SELLSTOP
+                                          )) {
+            result++;
+        }
+    }
+    return (result);
+}
+
+double getSellMaxTrade() {
+    int totalOrders = OrdersTotal();
+    double max = 0;
+    for (int i = 0; i < totalOrders; i++) {
+        bool os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL || OrderType() == OP_SELLLIMIT)) {
+            double openPrice = OrderOpenPrice();
+            if (openPrice > max) {
+                max = openPrice;
+            }
+        }
+    }
+    return (max);
+}
+
+double getBuyMinTrade() {
+    int totalOrders = OrdersTotal();
+    double min = 0;
+    if (totalOrders > 0) {
+        min = 100000000; // need to find this constant. :/
+        for (int i = 0; i < totalOrders; i++) {
+            bool os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+            if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY || OrderType() == OP_BUYLIMIT)) {
+                double openPrice = OrderOpenPrice();
+                if (openPrice < min) {
+                   min = openPrice;
+                }
+            }
+        }
+    }
+    return (min);
+}
