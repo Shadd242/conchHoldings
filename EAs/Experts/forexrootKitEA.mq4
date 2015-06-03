@@ -19,6 +19,26 @@
 #property strict
 
 //External parameters
+extern int pivotTimeFrame = PERIOD_D1;
+
+extern int pivotPointMode = 1;
+extern int buyPivotPointLineIndex = 3;
+extern int sellPivotPointLineIndex = 0;
+
+extern int buyPivotDirection = 0;
+extern int buyPivotPointBuffer = 0;
+
+extern int buyPivotPointARTTimeFrame = PERIOD_H1;
+extern int buyPivotPointARTRange = 30;
+extern int buyPivotPointARTShift = 0;
+
+extern int sellPivotDirection = 1;
+extern int sellPivotPointBuffer = 0;
+
+extern int sellPivotPointARTTimeFrame = PERIOD_H1;
+extern int sellPivotPointARTRange = 30;
+extern int sellPivotPointARTShift = 0;
+
 extern int slippage = 0;
 
 extern int stopLossMode = 1;//StopLossMode | -1 & 0 - Explicit | 1 - ATR
@@ -35,14 +55,14 @@ extern int buyStopLossATRShift = 0;
 
 
 extern int takeProfitMode = 1;//TakeProfitMode | -1 & 0 - Explicit | 1 - ATR
-extern double buyTakeProfit = 25;//Buy take profit in pips
-extern double sellTakeProfit = 25;//Sell take profit in pips
+extern double buyTakeProfit = 10;//Buy take profit in pips
+extern double sellTakeProfit = 10;//Sell take profit in pips
 
-extern int sellTakeProfitATRTimeFrame = PERIOD_D1;
+extern int sellTakeProfitATRTimeFrame = PERIOD_H1;
 extern int sellTakeProfitATRPeriod = 30;
 extern int sellTakeProfitATRShift = 0;
 
-extern int buyTakeProfitATRTimeFrame = PERIOD_D1;
+extern int buyTakeProfitATRTimeFrame = PERIOD_H1;
 extern int buyTakeProfitATRPeriod = 30;
 extern int buyTakeProfitATRShift = 0;
 
@@ -74,6 +94,8 @@ extern double sellStopBuffer = 50;//sellStopBuffer pip distance
 extern double buyLimitBuffer = 50;//buyLimitBuffer pip distance
 extern double buyStopBuffer = 50;//buyStopBuffer pip distance
 
+double buyPivotPointLine = 0;
+double sellPivotPointLine = 0;
 
 //Global Variables
 double UsePoint;
@@ -106,10 +128,15 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
+
 void OnTick()
   {
-//---
-   if (canOpenBuy()){
+//----  
+   getPivots();
+   buyPivotPointLine = getPivotValue(buyPivotPointLineIndex);
+   sellPivotPointLine = getPivotValue(sellPivotPointLineIndex);
+   if (canOpenBuy() &&
+       buyPivotPointLogic()){
       switch(buyEmptyOrderMode){
          case 1:
             if(getBuyTradeCount(OP_BUYLIMIT) == 0){
@@ -130,7 +157,8 @@ void OnTick()
             break;
       }
    }
-   if (canOpenSell()){
+   if (canOpenSell() &&
+       sellPivotPointLogic()){
       switch(sellEmptyOrderMode){
          case 1:
             if(getSellTradeCount(OP_SELLLIMIT) == 0){
@@ -671,5 +699,127 @@ double getSellPs(){
          return getATR(sellPipStepATRTimeFrame,sellPipStepATRPeriod,sellPipStepATRShift);
       default:
          return sellPS * UsePoint;
+   }
+}
+
+
+double pivotPoint;
+double r1;
+double r2;
+double r3;
+double s1;
+double s2;
+double s3;
+
+void getPivots(){
+   double close = iClose(NULL,pivotTimeFrame,1);
+   double high = iHigh(NULL,pivotTimeFrame,1);
+   double low = iLow(NULL,pivotTimeFrame,1);
+   pivotPoint = (high + low + close) / 3;
+   r1 = (2 * pivotPoint) - low;
+   s1 = (2 * pivotPoint) - high;
+   r2 = (pivotPoint - s1) + r1;
+   s2 = pivotPoint - (r1 - s1);
+   r3 = (pivotPoint - s2) + r2;
+   s3 = pivotPoint - (r2 - s2);
+   
+   drawLine("dailyPivotPoint",pivotPoint,24,clrYellow);
+   drawLine("r1",r1,24,clrDeepSkyBlue);
+   drawLine("r2",r2,24,clrDodgerBlue);
+   drawLine("r3",r3,24,clrBlue);
+   drawLine("s1",s1,24,clrLightPink);
+   drawLine("s2",s2,24,clrDeepPink);
+   drawLine("s3",s3,24,clrRed);
+}
+
+void drawLine(string objectName, double price, int length, color objColor){
+   ObjectDelete(objectName);
+   ObjectCreate(objectName, OBJ_TREND, 0, Time[0], price, Time[length], price);
+   ObjectSet(objectName, OBJPROP_RAY, false);
+   ObjectSet(objectName, OBJPROP_COLOR, objColor);
+}
+
+bool checkDirection(int direction, double inLine, double inPrice){
+   switch(direction){
+      case 0:
+         if(inPrice < inLine){
+            return true;
+         }else{
+            return false;
+         }
+         break;
+      case 1:
+         if(inPrice > inLine){
+            return true;
+         }else{
+            return false;
+         }
+         break;
+   }
+   return false;
+}
+
+bool buyPivotPointLogic(){
+   double priceDiff = MathAbs(Ask - buyPivotPointLine);
+   if (pivotPointMode < 0)
+      return true;
+   if (checkDirection(buyPivotDirection,buyPivotPointLine,Ask)){
+      switch(pivotPointMode){
+         case 0:
+            if(priceDiff > (buyPivotPointBuffer * UsePoint)){
+               return true;
+            }else{
+               return false;
+            }
+         case 1:
+            if(priceDiff > getATR(buyPivotPointARTTimeFrame,buyPivotPointARTRange,buyPivotPointARTShift)){
+               return true;
+            }else{
+               return false;
+            }
+      }
+   }
+   return false;
+}
+
+bool sellPivotPointLogic(){
+   double priceDiff = MathAbs(Bid - sellPivotPointLine);
+   if (pivotPointMode < 0)
+      return true;
+   if (checkDirection(sellPivotDirection,sellPivotPointLine,Bid)){
+      switch(pivotPointMode){
+         case 0:
+            if(priceDiff > (sellPivotPointBuffer * UsePoint)){
+               return true;
+            }else{
+               return false;
+            }
+         case 1:
+            if(priceDiff > getATR(sellPivotPointARTTimeFrame,sellPivotPointARTRange,sellPivotPointARTShift)){
+               return true;
+            }else{
+               return false;
+            }
+      }
+   }
+   return false;
+}
+
+double getPivotValue(int inLineIndex){
+   switch(inLineIndex){
+      default:
+         return pivotPoint;
+      case 0:
+         return r1;
+      case 1:
+         return r2;
+      case 2:
+         return r3;
+      case 3:
+         return s1;
+      case 4:
+         return s2;
+      case 5:
+         return s3;                                    
    }
 }
