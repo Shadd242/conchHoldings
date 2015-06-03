@@ -100,10 +100,10 @@ double sellPivotPointLine = 0;
 //Global Variables
 double UsePoint;
 int UseSlippage;
-double buy_global_max;
-double buy_global_min;
-double sell_global_max;
-double sell_global_min;
+//double buy_global_max;
+//double buy_global_min;
+//double sell_global_max;
+//double sell_global_min;
 double version = 1.0;
 
 //+------------------------------------------------------------------+
@@ -185,9 +185,7 @@ void OnTick()
       closeSellOrdersInLoss();
       closeBuyOrdersInLoss();
    }
-   
-   Comment("UsePoint: " + DoubleToString(UsePoint) + "\n" + 
-           "UseSlippage: " + IntegerToString(UseSlippage));
+   hud();
   }
 //+------------------------------------------------------------------+
 double PipPoint(string Currency)
@@ -360,11 +358,9 @@ void openBuy(int inBuyOrderType) {
    double stoploss = GetBuyStopLoss(orderPrice);
    double buy_lots = getBuyLotSize();
    int ticket = OrderSend(Symbol(), inBuyOrderType, buy_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 10000, 0, Blue);
-   //Print("ticket: " + ticket + " | takeprofit: " + takeprofit);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
           Print("BUY order opened : lots = " + DoubleToString(buy_lots), OrderOpenPrice());
-          buy_global_min = OrderOpenPrice();
       }
    } else {
       Print("Error opening BUY order : lots = " + DoubleToString(buy_lots),
@@ -373,7 +369,6 @@ void openBuy(int inBuyOrderType) {
       " : buy_lots = " + DoubleToString(buy_lots),
       " : ask = " + DoubleToString(orderPrice),
       GetLastError()); 
-      //return(-1);
    }
 }
 
@@ -389,11 +384,9 @@ void openSell(int inSellOrderType) {
    double stoploss = GetSellStopLoss(orderPrice);
    double sell_lots = getSellLotSize();
    int ticket = OrderSend(Symbol(), inSellOrderType, sell_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 20000, 0, Red);
-   //Print("ticket: " + ticket + " | takeprofit: " + takeprofit);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
          Print("SELL order opened : lots = " + DoubleToString(sell_lots), OrderOpenPrice());
-         sell_global_max = OrderOpenPrice();
       }
    } else {
       Print("Error opening SELL order : lots = " + DoubleToString(sell_lots), 
@@ -402,8 +395,6 @@ void openSell(int inSellOrderType) {
             " : sell_lots = " + DoubleToString(sell_lots),
             " : bid = " + DoubleToString(orderPrice),
             GetLastError()); 
-
-      //return(-1);
    }
 }
 double getSellOrderPrice(int inSellOrderType){
@@ -516,7 +507,7 @@ void closeSellOrdersInProfit() {
             while (IsTradeContextBusy()) Sleep(10);
             RefreshRates();
             bool closed = false;
-            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0);;
+            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0);
             if (Ask <= takeprofit) {
                closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
                if (!closed) {
@@ -525,7 +516,6 @@ void closeSellOrdersInProfit() {
             }
         }
     }
-    //return(0);
 }
 
 void closeSellOrdersInLoss() {
@@ -548,7 +538,6 @@ void closeSellOrdersInLoss() {
             }
         }
     }
-    //return(0);
 }
 
 void closeBuyOrdersInLoss() {
@@ -572,7 +561,6 @@ void closeBuyOrdersInLoss() {
             }
         }
     }
-    //return(0);
 }
 
 int getTradeCount() {
@@ -592,9 +580,7 @@ int getBuyTradeCount() {
     int totalOrders = OrdersTotal();
     for (int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY //|| 
-                                          //OrderType() == OP_BUYLIMIT ||
-                                          //OrderType() == OP_BUYSTOP
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY 
                                           )) {
             result++;
         }
@@ -607,9 +593,7 @@ int getBuyTradeCount(int orderType) {
     int totalOrders = OrdersTotal();
     for (int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
-                                          //OrderType() == OP_BUYLIMIT ||
-                                          //OrderType() == OP_BUYSTOP
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType
                                           )) {
             result++;
         }
@@ -622,9 +606,7 @@ int getSellTradeCount() {
     int totalOrders = OrdersTotal();
     for (int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL //|| 
-                                          //OrderType() == OP_SELLLIMIT ||
-                                          //OrderType() == OP_SELLSTOP
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_SELL
                                           )) {
             result++;
         }
@@ -637,9 +619,7 @@ int getSellTradeCount(int orderType) {
     int totalOrders = OrdersTotal();
     for (int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
-        if (OrderSymbol() == Symbol() && (OrderType() == orderType //|| 
-                                          //OrderType() == OP_SELLLIMIT ||
-                                          //OrderType() == OP_SELLSTOP
+        if (OrderSymbol() == Symbol() && (OrderType() == orderType
                                           )) {
             result++;
         }
@@ -822,4 +802,47 @@ double getPivotValue(int inLineIndex){
       case 5:
          return s3;                                    
    }
+}
+
+void hud() {
+    double buy_psPoint = buyPS * UsePoint;  
+    double sell_psPoint = sellPS * UsePoint;
+    
+    double buy_tp = GetBuyTakeProfit(0);
+    double sell_tp = GetSellTakeProfit(0);
+    
+    double buy_sl = GetBuyStopLoss(0);
+    double sell_sl = GetSellStopLoss(0);
+    
+    double buy_lots = getBuyLotSize();
+    double sell_lots = getSellLotSize();
+    
+    Comment(
+        "ForexRootkitBandsDual v." + DoubleToString(version) , "\n",      
+        "enabled = " + IntegerToString(IsExpertEnabled()) + "\n" +
+        "trade allowed = " + IntegerToString(IsTradeAllowed()) + "\n" +
+        "optimization = " + IntegerToString(IsOptimization()) + "\n" +
+        "testing = " + IntegerToString(IsTesting()) + "\n" +
+        "demo = " + IntegerToString(IsDemo()) + "\n" +
+        "stopped = " + IntegerToString(IsStopped()) + "\n" +
+        "connected = " + IntegerToString(IsConnected()) + "\n\n" +     
+        "buy_lots = " + DoubleToStr(buy_lots, 2) + ", sell_lots = " + DoubleToStr(sell_lots, 2), "\n",
+        "buy rs = " + IntegerToString(buyRiskStep) + ", sell_rs = " + IntegerToString(sellRiskStep), "\n",        
+        "buy_ps = " + IntegerToString(buyPS) + ", sell_ps = " + IntegerToString(sellPS), "\n",
+        "buy_tp = " + DoubleToStr(buy_tp, 0) + ", sell_tp = " + DoubleToStr(sell_tp, 0), "\n",
+        "buy_sl = " + DoubleToStr(buy_sl, 0) + ", sell_sl = " + DoubleToStr(sell_sl, 0), "\n",
+        "bid = "  + DoubleToStr(Bid, 4), "\n",
+        "ask = "  + DoubleToStr(Ask, 4), "\n", "\n",
+        "spread = " + DoubleToStr((Ask-Bid)*10000, 1), "\n\n",
+        "tc = " + IntegerToString(getTradeCount()) + ", buy tc = " + IntegerToString(getBuyTradeCount()) + ", sell tc = " + IntegerToString(getSellTradeCount()), "\n\n",
+        "takeProfitMode = " + IntegerToString(takeProfitMode), "\n",
+        "stopLossMode = " + IntegerToString(stopLossMode), "\n\n",
+        "buy_tp amount = $" + DoubleToStr(buy_tp * buy_lots, 2) + ", sell_tp amount = $" + DoubleToStr(sell_tp * sell_lots, 2), "\n",
+        "buy_sl amount = $" + DoubleToStr(buy_sl * buy_lots, 2) + ", sell_sl amount = $" + DoubleToStr(sell_sl * sell_lots, 2), "\n\n",
+        "account balance = $" + DoubleToStr(AccountBalance(), 2), "\n",
+        "account equity = $" + DoubleToStr(AccountEquity(), 2), "\n",
+        "account margin = $" + DoubleToStr(AccountMargin(), 2) + "\n",
+        "account free margin = $" + DoubleToStr(AccountFreeMargin(), 2) +  "\n\n",
+        "% drawdown = " + DoubleToStr((100-((AccountEquity()-AccountCredit())/AccountBalance())*100), 2) + "\n"
+    );
 }
