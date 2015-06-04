@@ -3,96 +3,93 @@
 //|                               Copyright 2015, Conchman Holdings. |
 //|                                              http://www.mql5.com |
 //+------------------------------------------------------------------+
-/**
-#import "forexrootKitToolsLib.ex4"
-   int getSellTradeCount(int orderType);
-   int getSellTradeCount();
-   int getBuyTradeCount(int orderType);
-   int getBuyTradeCount();
-   int getTradeCount();
-   double getSellMaxTrade();
-   double getBuyMinTrade();
-#import
-**/
+
 #property copyright "Copyright 2015, Conchman Holdings."
 #property link      "http://www.mql5.com"
 #property strict
 
 //External parameters
-extern int pivotTimeFrame = PERIOD_D1;
+extern int slippage = 0;//slippage in piPs
+extern double minLotSize = 0.01;
+extern int buyRiskStep = 1000;//buyRiskStep in dollars
+extern int sellRiskStep = 1000;//sellRiskStep in dollars
+extern double maxLotSize = 20;
 
-extern int pivotPointMode = 1;
-extern int buyPivotPointLineIndex = 3;
-extern int sellPivotPointLineIndex = 0;
-
-extern int buyPivotDirection = 0;
-extern int buyPivotPointBuffer = 0;
-
-extern int buyPivotPointARTTimeFrame = PERIOD_H1;
+extern string PivotPointSectionStart = "----------------PIVOT POINT-------------";
+extern int pivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
+extern string buyPivotPointSectionStart = "----------------buy-------------";
+extern int buyPivotPointMode = 1;//buyPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
+extern int buyPivotPointLineIndex = 3;//buyPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+extern int buyPivotDirection = 0;//buyPivotDirection | 0 = < | 1 = >
+extern int buyPivotPointBuffer = 0;//buyPivotPointBuffer in piPs
+extern int buyPivotPointARTTimeFrame = PERIOD_H1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyPivotPointARTRange = 30;
 extern int buyPivotPointARTShift = 0;
-
-extern int sellPivotDirection = 1;
-extern int sellPivotPointBuffer = 0;
-
-extern int sellPivotPointARTTimeFrame = PERIOD_H1;
+extern string sellPivotPointSectionStart = "----------------sell-------------";
+extern int sellPivotPointMode = 1;//sellPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
+extern int sellPivotPointLineIndex = 0;//sellPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+extern int sellPivotDirection = 1;//sellPivotDirection | 0 = < | 1 = >
+extern int sellPivotPointBuffer = 0;//sellPivotPointBuffer in piPs
+extern int sellPivotPointARTTimeFrame = PERIOD_H1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int sellPivotPointARTRange = 30;
 extern int sellPivotPointARTShift = 0;
+extern string PivotPointSectionEnd = "----------------PIVOT POINT-------------";
 
-extern int slippage = 0;
-
-extern int stopLossMode = 1;//StopLossMode | -1 & 0 - Explicit | 1 - ATR
-extern double buyStopLoss = 250;//Buy StopLoss in pips
-extern double sellStopLoss = 250;//Sell StopLoss in pips
-
-extern int sellStopLossATRTimeFrame = PERIOD_D1;
-extern int sellStopLossATRPeriod = 30;
-extern int sellStopLossATRShift = 0;
-
-extern int buyStopLossATRTimeFrame = PERIOD_D1;
+extern string StopLossSectionStart = "----------------STOP LOSS-------------";
+extern string buyStopLossSectionStart = "----------------buy-------------";
+extern int buyStopLossMode = 1;//buyStopLossMode | -1 & 0 = Explicit | 1 = ATR
+extern double buyStopLoss = 250;//buyStopLoss in piPs
+extern int buyStopLossATRTimeFrame = PERIOD_D1;//buyStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyStopLossATRPeriod = 30;
 extern int buyStopLossATRShift = 0;
+extern string sellStopLossSectionStart = "----------------sell-------------";
+extern int sellStopLossMode = 1;//sellStopLossMode | -1 & 0 = Explicit | 1 = ATR
+extern double sellStopLoss = 250;//sellStopLoss in piPs
+extern int sellStopLossATRTimeFrame = PERIOD_D1;//sellStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellStopLossATRPeriod = 30;
+extern int sellStopLossATRShift = 0;
+extern string StopLossSectionEnd = "----------------STOP LOSS-------------";
 
-
-extern int takeProfitMode = 1;//TakeProfitMode | -1 & 0 - Explicit | 1 - ATR
-extern double buyTakeProfit = 10;//Buy take profit in pips
-extern double sellTakeProfit = 10;//Sell take profit in pips
-
-extern int sellTakeProfitATRTimeFrame = PERIOD_H1;
-extern int sellTakeProfitATRPeriod = 30;
-extern int sellTakeProfitATRShift = 0;
-
-extern int buyTakeProfitATRTimeFrame = PERIOD_H1;
+extern string TakeProfitSectionStart = "----------------TAKE PROFIT-------------";
+extern string buyTakeProfitSectionStart = "----------------buy-------------";
+extern int buyTakeProfitMode = 1;//buyTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
+extern double buyTakeProfit = 10;//buyTakeProfit in piPs
+extern int buyTakeProfitATRTimeFrame = PERIOD_H1;//buyTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyTakeProfitATRPeriod = 30;
 extern int buyTakeProfitATRShift = 0;
+extern string sellTakeProfitSectionStart = "----------------sell-------------";
+extern int sellTakeProfitMode = 1;//sellTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
+extern double sellTakeProfit = 10;//sellTakeProfit in piPs
+extern int sellTakeProfitATRTimeFrame = PERIOD_H1;//sellTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellTakeProfitATRPeriod = 30;
+extern int sellTakeProfitATRShift = 0;
+extern string TakeProfitSectionEnd = "----------------TAKE PROFIT-------------";
 
-extern int pipStepMode = 1;//pipStepMode | -1 - Explicit | 1 - ATR
-extern int buyPS = 100;//Pip distance between buy orders
-extern int sellPS = 100;//Pip distance between sell orders
-
-extern int sellPipStepATRTimeFrame = PERIOD_D1;
-extern int sellPipStepATRPeriod = 30;
-extern int sellPipStepATRShift = 0;
-
-extern int buyPipStepATRTimeFrame = PERIOD_D1;
+extern string PipStepSectionStart = "----------------PIP STEP-------------";
+extern string buyPipStepSectionStart = "----------------buy-------------";
+extern int buyPipStepMode = 1;//buyPipStepMode | -1 = Explicit | 1 = ATR
+extern int buyPS = 100;//buyPS in piPs
+extern int buyPipStepATRTimeFrame = PERIOD_D1;//buyPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyPipStepATRPeriod = 30;
 extern int buyPipStepATRShift = 0;
+extern string sellPipStepSectionStart = "----------------sell-------------";
+extern int sellPipStepMode = 1;//sellPipStepMode | -1 = Explicit | 1 = ATR
+extern int sellPS = 100;//sellPS in piPs
+extern int sellPipStepATRTimeFrame = PERIOD_D1;//sellPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellPipStepATRPeriod = 30;
+extern int sellPipStepATRShift = 0;
+extern string PipStepSectionEnd = "----------------PIP STEP-------------";
 
-extern double minLotSize = 0.01;//Min lot size
-
-extern int buyRiskStep = 1000;//Buy RiskStep
-extern int sellRiskStep = 1000;//Sell RiskStep
-
-extern double maxLotSize = 20;//Max lot size
-
-
-extern int sellEmptyOrderMode = 0; //sellEmptyOrderMode 0 - Market | 1 - LIMIT | 2 - STOP
-extern int buyEmptyOrderMode = 0; //buyEmptyOrderMode 0 - Market | 1 - LIMIT | 2 - STOP
-
-extern double sellLimitBuffer = 50;//sellLimitBuffer pip distance
-extern double sellStopBuffer = 50;//sellStopBuffer pip distance
-extern double buyLimitBuffer = 50;//buyLimitBuffer pip distance
-extern double buyStopBuffer = 50;//buyStopBuffer pip distance
+extern string EmptyOrderSectionStart = "----------------EMPTY ORDER MODE-------------";
+extern string buyEmptyOrderSectionStart = "----------------buy-------------";
+extern int buyEmptyOrderMode = 0; //buyEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
+extern double buyLimitBuffer = 50;//buyLimitBuffer in piPs
+extern double buyStopBuffer = 50;//buyStopBuffer in piPs
+extern string sellEmptyOrderSectionStart = "----------------sell-------------";
+extern int sellEmptyOrderMode = 0; //sellEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
+extern double sellLimitBuffer = 50;//sellLimitBuffer in piPs
+extern double sellStopBuffer = 50;//sellStopBuffer in piPs
+extern string EmptyOrderSectionEnd = "----------------EMPTY ORDER MODE-------------";
 
 double buyPivotPointLine = 0;
 double sellPivotPointLine = 0;
@@ -100,10 +97,6 @@ double sellPivotPointLine = 0;
 //Global Variables
 double UsePoint;
 int UseSlippage;
-//double buy_global_max;
-//double buy_global_min;
-//double sell_global_max;
-//double sell_global_min;
 double version = 1.0;
 
 //+------------------------------------------------------------------+
@@ -152,7 +145,7 @@ void OnTick()
                openBuy(OP_BUY);
             }
             break;
-         default:
+         case 0:
             openBuy(OP_BUY);
             break;
       }
@@ -174,15 +167,17 @@ void OnTick()
                openSell(OP_SELL);
             }
             break;
-         default:
+         case 0:
             openSell(OP_SELL);
             break;
       }
    }
-   if (takeProfitMode > -1){
+   if (sellTakeProfitMode > -1){
       closeSellOrdersInProfit();
-      closeBuyOrdersInProfit();
       closeSellOrdersInLoss();
+   }
+   if (buyTakeProfitMode > -1){
+      closeBuyOrdersInProfit();
       closeBuyOrdersInLoss();
    }
    hud();
@@ -210,7 +205,7 @@ int GetSlippaage(string Currency, int SlippagePips)
 
 double GetBuyStopLoss(double OpenPrice){
    double _buyStopLoss = OpenPrice - (buyStopLoss * UsePoint);
-   switch(stopLossMode){
+   switch(buyStopLossMode){
       case 0:
          if(OpenPrice > 0){
             return 0;
@@ -234,7 +229,7 @@ double GetBuyStopLoss(double OpenPrice){
 
 double GetSellStopLoss(double OpenPrice){
    double _sellStopLoss = OpenPrice + (sellStopLoss * UsePoint);
-   switch(stopLossMode){
+   switch(sellStopLossMode){
       case 0:
          if(OpenPrice > 0){
             return 0;
@@ -258,7 +253,7 @@ double GetSellStopLoss(double OpenPrice){
 
 double GetBuyTakeProfit(double OpenPrice){
    double _buyTakeProfit = OpenPrice + (buyTakeProfit * UsePoint);
-   switch(takeProfitMode){
+   switch(buyTakeProfitMode){
       case 0:
          if(OpenPrice > 0){
             return 0;
@@ -282,7 +277,7 @@ double GetBuyTakeProfit(double OpenPrice){
 
 double GetSellTakeProfit(double OpenPrice){
    double _sellTakeProfit = OpenPrice - (sellTakeProfit * UsePoint);
-   switch(takeProfitMode){
+   switch(sellTakeProfitMode){
       case 0:
          if (OpenPrice > 0){
             return 0;
@@ -665,7 +660,7 @@ double getATR(int timeframe, int period, int shift) {
 }
 
 double getBuyPs(){
-   switch(pipStepMode){
+   switch(buyPipStepMode){
       case 0:
          return getATR(buyPipStepATRTimeFrame,buyPipStepATRPeriod,buyPipStepATRShift);
       default:
@@ -674,7 +669,7 @@ double getBuyPs(){
 }
 
 double getSellPs(){
-   switch(pipStepMode){
+   switch(sellPipStepMode){
       case 0:
          return getATR(sellPipStepATRTimeFrame,sellPipStepATRPeriod,sellPipStepATRShift);
       default:
@@ -741,10 +736,10 @@ bool checkDirection(int direction, double inLine, double inPrice){
 
 bool buyPivotPointLogic(){
    double priceDiff = MathAbs(Ask - buyPivotPointLine);
-   if (pivotPointMode < 0)
+   if (buyPivotPointMode < 0)
       return true;
    if (checkDirection(buyPivotDirection,buyPivotPointLine,Ask)){
-      switch(pivotPointMode){
+      switch(buyPivotPointMode){
          case 0:
             if(priceDiff > (buyPivotPointBuffer * UsePoint)){
                return true;
@@ -764,10 +759,10 @@ bool buyPivotPointLogic(){
 
 bool sellPivotPointLogic(){
    double priceDiff = MathAbs(Bid - sellPivotPointLine);
-   if (pivotPointMode < 0)
+   if (sellPivotPointMode < 0)
       return true;
    if (checkDirection(sellPivotDirection,sellPivotPointLine,Bid)){
-      switch(pivotPointMode){
+      switch(sellPivotPointMode){
          case 0:
             if(priceDiff > (sellPivotPointBuffer * UsePoint)){
                return true;
@@ -835,8 +830,10 @@ void hud() {
         "ask = "  + DoubleToStr(Ask, 4), "\n", "\n",
         "spread = " + DoubleToStr((Ask-Bid)*10000, 1), "\n\n",
         "tc = " + IntegerToString(getTradeCount()) + ", buy tc = " + IntegerToString(getBuyTradeCount()) + ", sell tc = " + IntegerToString(getSellTradeCount()), "\n\n",
-        "takeProfitMode = " + IntegerToString(takeProfitMode), "\n",
-        "stopLossMode = " + IntegerToString(stopLossMode), "\n\n",
+        "sellTakeProfitMode = " + IntegerToString(sellTakeProfitMode), "\n",
+        "buyTakeProfitMode = " + IntegerToString(buyTakeProfitMode), "\n",
+        "sellStopLossMode = " + IntegerToString(sellStopLossMode), "\n",
+        "buystopLossMode = " + IntegerToString(buyStopLossMode), "\n\n",
         "buy_tp amount = $" + DoubleToStr(buy_tp * buy_lots, 2) + ", sell_tp amount = $" + DoubleToStr(sell_tp * sell_lots, 2), "\n",
         "buy_sl amount = $" + DoubleToStr(buy_sl * buy_lots, 2) + ", sell_sl amount = $" + DoubleToStr(sell_sl * sell_lots, 2), "\n\n",
         "account balance = $" + DoubleToStr(AccountBalance(), 2), "\n",
