@@ -19,21 +19,46 @@ extern string PivotPointSectionStart = "----------------PIVOT POINT-------------
 extern int pivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
 extern string buyPivotPointSectionStart = "----------------buy-------------";
 extern int buyPivotPointMode = 1;//buyPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
-extern int buyPivotPointLineIndex = 3;//buyPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+extern int buyPivotPointLineIndex = -1;//buyPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
 extern int buyPivotDirection = 0;//buyPivotDirection | 0 = < | 1 = >
 extern int buyPivotPointBuffer = 0;//buyPivotPointBuffer in piPs
-extern int buyPivotPointARTTimeFrame = PERIOD_H1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int buyPivotPointARTTimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyPivotPointARTRange = 30;
 extern int buyPivotPointARTShift = 0;
 extern string sellPivotPointSectionStart = "----------------sell-------------";
 extern int sellPivotPointMode = 1;//sellPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
-extern int sellPivotPointLineIndex = 0;//sellPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+extern int sellPivotPointLineIndex = -1;//sellPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
 extern int sellPivotDirection = 1;//sellPivotDirection | 0 = < | 1 = >
 extern int sellPivotPointBuffer = 0;//sellPivotPointBuffer in piPs
-extern int sellPivotPointARTTimeFrame = PERIOD_H1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellPivotPointARTTimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int sellPivotPointARTRange = 30;
 extern int sellPivotPointARTShift = 0;
 extern string PivotPointSectionEnd = "----------------PIVOT POINT-------------";
+
+extern string MASectionStart = "----------------MA-------------";
+extern string buyMASectionStart = "----------------buy-------------";
+extern int buyMAMode = 1;//buyMAMode | 0 = Explicit | 1 = ATR
+extern int buyMAType = MODE_SMA;//buyMAType | / = MODE_SMA | / = MODE_EMA
+extern int buyMATimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int buyMAPeriod = 30;
+extern int buyMAShift = 0;
+extern int buyMADirection = 0;//buyMADirection | 0 = < | 1 = >
+extern int buyMABuffer = 25;//buyPivotPointBuffer in piPs
+extern int buyMAARTTimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int buyMAARTRange = 30;
+extern int buyMAARTShift = 0;
+extern string sellMASectionStart = "----------------sell-------------";
+extern int sellMAMode = 1;//sellMAMode | 0 = Explicit | 1 = ATR
+extern int sellMAType = MODE_SMA;//sellMAType | / = MODE_SMA | / = MODE_EMA
+extern int sellMATimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellMAPeriod = 30;
+extern int sellMAShift = 0;
+extern int sellMADirection = 1;//sellMADirection | 0 = < | 1 = >
+extern int sellMABuffer = 25;//sellPivotPointBuffer in piPs
+extern int sellMAARTTimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellMAARTRange = 30;
+extern int sellMAARTShift = 0;
+extern string MASectionEnd = "----------------MA-------------";
 
 extern string StopLossSectionStart = "----------------STOP LOSS-------------";
 extern string buyStopLossSectionStart = "----------------buy-------------";
@@ -54,13 +79,13 @@ extern string TakeProfitSectionStart = "----------------TAKE PROFIT-------------
 extern string buyTakeProfitSectionStart = "----------------buy-------------";
 extern int buyTakeProfitMode = 1;//buyTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
 extern double buyTakeProfit = 10;//buyTakeProfit in piPs
-extern int buyTakeProfitATRTimeFrame = PERIOD_H1;//buyTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int buyTakeProfitATRTimeFrame = PERIOD_D1;//buyTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int buyTakeProfitATRPeriod = 30;
 extern int buyTakeProfitATRShift = 0;
 extern string sellTakeProfitSectionStart = "----------------sell-------------";
 extern int sellTakeProfitMode = 1;//sellTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
 extern double sellTakeProfit = 10;//sellTakeProfit in piPs
-extern int sellTakeProfitATRTimeFrame = PERIOD_H1;//sellTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+extern int sellTakeProfitATRTimeFrame = PERIOD_D1;//sellTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
 extern int sellTakeProfitATRPeriod = 30;
 extern int sellTakeProfitATRShift = 0;
 extern string TakeProfitSectionEnd = "----------------TAKE PROFIT-------------";
@@ -129,7 +154,8 @@ void OnTick()
    buyPivotPointLine = getPivotValue(buyPivotPointLineIndex);
    sellPivotPointLine = getPivotValue(sellPivotPointLineIndex);
    if (canOpenBuy() &&
-       buyPivotPointLogic()){
+       buyPivotPointLogic() && 
+       buyMALogic()){
       switch(buyEmptyOrderMode){
          case 1:
             if(getBuyTradeCount(OP_BUYLIMIT) == 0){
@@ -151,7 +177,8 @@ void OnTick()
       }
    }
    if (canOpenSell() &&
-       sellPivotPointLogic()){
+       sellPivotPointLogic() &&
+       sellMALogic()){
       switch(sellEmptyOrderMode){
          case 1:
             if(getSellTradeCount(OP_SELLLIMIT) == 0){
@@ -737,7 +764,7 @@ bool checkDirection(int direction, double inLine, double inPrice){
 bool buyPivotPointLogic(){
    double priceDiff = MathAbs(Ask - buyPivotPointLine);
    if (buyPivotPointMode < 0)
-      return true;
+      return false;
    if (checkDirection(buyPivotDirection,buyPivotPointLine,Ask)){
       switch(buyPivotPointMode){
          case 0:
@@ -757,10 +784,34 @@ bool buyPivotPointLogic(){
    return false;
 }
 
+bool buyMALogic(){
+   double buyMA = getSMA(buyMATimeFrame,buyMAPeriod,buyMAShift,buyMAType);
+   double priceDiff = MathAbs(Ask - buyMA);
+   if (buyMAMode < 0)
+      return false;
+   if (checkDirection(buyMADirection,buyMA,Ask)){
+      switch(buyMAMode){
+         case 0:
+            if(priceDiff > (buyMABuffer * UsePoint)){
+               return true;
+            }else{
+               return false;
+            }
+         case 1:
+            if(priceDiff > getATR(buyMAARTTimeFrame,buyMAARTRange,buyMAARTShift)){
+               return true;
+            }else{
+               return false;
+            }
+      }
+   }
+   return false;
+}
+
 bool sellPivotPointLogic(){
    double priceDiff = MathAbs(Bid - sellPivotPointLine);
    if (sellPivotPointMode < 0)
-      return true;
+      return false;
    if (checkDirection(sellPivotDirection,sellPivotPointLine,Bid)){
       switch(sellPivotPointMode){
          case 0:
@@ -771,6 +822,30 @@ bool sellPivotPointLogic(){
             }
          case 1:
             if(priceDiff > getATR(sellPivotPointARTTimeFrame,sellPivotPointARTRange,sellPivotPointARTShift)){
+               return true;
+            }else{
+               return false;
+            }
+      }
+   }
+   return false;
+}
+
+bool sellMALogic(){
+   double sellMA = getSMA(sellMATimeFrame,sellMAPeriod,sellMAShift,sellMAType);
+   double priceDiff = MathAbs(Bid - sellMA);
+   if (sellMAMode < 0)
+      return false;
+   if (checkDirection(sellMADirection,sellMA,Bid)){
+      switch(sellMAMode){
+         case 0:
+            if(priceDiff > (sellMABuffer * UsePoint)){
+               return true;
+            }else{
+               return false;
+            }
+         case 1:
+            if(priceDiff > getATR(sellMAARTTimeFrame,sellMAARTRange,sellMAARTShift)){
                return true;
             }else{
                return false;
@@ -842,4 +917,8 @@ void hud() {
         "account free margin = $" + DoubleToStr(AccountFreeMargin(), 2) +  "\n\n",
         "% drawdown = " + DoubleToStr((100-((AccountEquity()-AccountCredit())/AccountBalance())*100), 2) + "\n"
     );
+}
+
+double getSMA (int inTimeframe, int inSmaPeriod, int inSmaShift, int inMode){
+   return (iMA(NULL,inTimeframe,inSmaPeriod,inSmaShift,inMode,PRICE_MEDIAN,0));
 }
