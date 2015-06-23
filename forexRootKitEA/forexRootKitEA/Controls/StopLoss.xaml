@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="forexRootKitEA.Controls.StopLoss"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dc="clr-namespace:forexRootKitEA.Controls"
+             mc:Ignorable="d">
+    <Grid>
+        <StackPanel>
+            <dc:spacingMode x:Name="spacingMode"/>
+            <TabControl>
+                <TabItem Header="Pips">
+                    <WrapPanel HorizontalAlignment="Center" Grid.Row="2">
+                        <Label Content="Stop Loss in Pips:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="txtStopLoss"/>
+                    </WrapPanel>
+                </TabItem>
+                <TabItem Header="ATR">
+                    <dc:ATR x:Name="ATR"/>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

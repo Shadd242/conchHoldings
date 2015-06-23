@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="forexRootKitEA.Controls.EOM"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:dc="clr-namespace:forexRootKitEA.Controls">
+    <StackPanel>
+        <dc:OrderTypes x:Name="orderTypes"/>
+        <WrapPanel HorizontalAlignment="Center">
+            <WrapPanel HorizontalAlignment="Center">
+                <Label Content="Limit Order Buffer in Pips:" />
+                <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="LimitBuffer"/>
+            </WrapPanel>
+            <WrapPanel HorizontalAlignment="Center">
+                <Label Content="Stop Order Buffer in Pips:" />
+                <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="StopBuffer"/>
+            </WrapPanel>
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

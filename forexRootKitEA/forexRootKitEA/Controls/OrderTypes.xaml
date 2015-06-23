@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="forexRootKitEA.Controls.OrderTypes"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <UserControl.Resources>
+
+        <LinearGradientBrush x:Key="GrayBlueGradientBrush"  
+      StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="White" Offset="0" />
+            <GradientStop Color="Beige" Offset="0.5" />
+            <GradientStop Color="White" Offset="1" />
+        </LinearGradientBrush>
+
+        <Style TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="0,5,5,5" />
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+
+        <Style TargetType="ToggleButton">
+            <Setter Property="Background" Value="{StaticResource GrayBlueGradientBrush}" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Width" Value="55" />
+        </Style>
+
+        <Style TargetType="Label">
+        </Style>
+
+    </UserControl.Resources>
+    <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+        <ToggleButton IsChecked="{Binding ElementName=Market, Path=IsChecked}">
+            <WrapPanel>
+                <Label Content="Market"/>
+                <RadioButton Name="Market" GroupName="OrderTypeGroup">0</RadioButton>
+            </WrapPanel>
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding ElementName=Limit, Path=IsChecked}">
+            <WrapPanel>
+                <Label Content="Limit"/>
+                <RadioButton Name="Limit" GroupName="OrderTypeGroup">1</RadioButton>
+            </WrapPanel>
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding ElementName=Stop, Path=IsChecked}">
+            <WrapPanel>
+                <Label Content="Stop"/>
+                <RadioButton Name="Stop" GroupName="OrderTypeGroup">2</RadioButton>
+            </WrapPanel>
+        </ToggleButton>
+
+    </WrapPanel>
+</UserControl>

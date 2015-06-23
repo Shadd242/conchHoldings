@@ -1,0 +1,65 @@
+﻿<Window x:Class="forexRootKitEA.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dc="clr-namespace:forexRootKitEA.Controls"
+        Title="MainWindow" SizeToContent="WidthAndHeight">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0">
+            <TabItem Header="Money Management">
+                <StackPanel>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Label Content="Slippage in Pips:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="Slippage"/>
+                    </WrapPanel>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Label Content="Min Lot Size:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MinLotSize"/>
+                    </WrapPanel>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Label Content="Max Lot Size:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MaxLotSize"/>
+                    </WrapPanel>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Label Content="Buy Risk Step in dollars:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="BuyRiskStep"/>
+                    </WrapPanel>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Label Content="Sell Risk Step in dollars:" />
+                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="SellRiskStep"/>
+                    </WrapPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Trading Session">
+                <dc:Sessions x:Name="sessions"/>
+            </TabItem>
+            <TabItem Header="Settings">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <Label Content="Path to Config: " HorizontalAlignment="Center" HorizontalContentAlignment="Center"/>
+                        <TextBox MinWidth="250" MaxWidth="250" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Name="txtboxConfigPath" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Button Name="btnSave" Content="Save" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                        <Button Name="btnGet" Content="Get" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                    </StackPanel>
+                </Grid>
+                
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="1">
+            <Label Content="BUY" HorizontalAlignment="Center"/>
+            <dc:Orders x:Name="buy"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Label Content="SELL" HorizontalAlignment="Center"/>
+            <dc:Orders x:Name="sell" Grid.Row="2"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

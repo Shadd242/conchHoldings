@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="forexRootKitEA.Controls.ATR"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:dc="clr-namespace:forexRootKitEA.Controls">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <dc:TimeFrameControl Grid.Row="0" x:Name="timeFrame"/>
+        <WrapPanel HorizontalAlignment="Center" Grid.Row="1">
+            <WrapPanel HorizontalAlignment="Center" Grid.Row="1">
+                <Label Content="Period:" />
+                <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="Period"/>
+            </WrapPanel>
+            <WrapPanel HorizontalAlignment="Center" Grid.Row="2" Orientation="Horizontal">
+                <Label Content="Shift:" />
+                <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="Shift"/>
+            </WrapPanel>
+        </WrapPanel>
+    </Grid>
+</UserControl>
