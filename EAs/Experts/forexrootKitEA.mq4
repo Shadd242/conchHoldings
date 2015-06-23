@@ -9,115 +9,118 @@
 #property strict
 
 //External parameters
-extern int slippage = 0;//slippage in piPs
-extern double minLotSize = 0.01;
-extern int buyRiskStep = 1000;//buyRiskStep in dollars
-extern int sellRiskStep = 1000;//sellRiskStep in dollars
-extern double maxLotSize = 20;
+int slippage = 7;//slippage in piPs
+double minLotSize = 0.01;
+int buyRiskStep = 1000;//buyRiskStep in dollars
+int sellRiskStep = 1000;//sellRiskStep in dollars
+double maxLotSize = 20;
 
-extern string PivotPointSectionStart = "----------------PIVOT POINT-------------";
-extern int pivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
-extern string buyPivotPointSectionStart = "----------------buy-------------";
-extern int buyPivotPointMode = 1;//buyPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
-extern int buyPivotPointLineIndex = -1;//buyPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
-extern int buyPivotDirection = 0;//buyPivotDirection | 0 = < | 1 = >
-extern int buyPivotPointBuffer = 0;//buyPivotPointBuffer in piPs
-extern int buyPivotPointARTTimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyPivotPointARTRange = 30;
-extern int buyPivotPointARTShift = 0;
-extern string sellPivotPointSectionStart = "----------------sell-------------";
-extern int sellPivotPointMode = 1;//sellPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
-extern int sellPivotPointLineIndex = -1;//sellPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
-extern int sellPivotDirection = 1;//sellPivotDirection | 0 = < | 1 = >
-extern int sellPivotPointBuffer = 0;//sellPivotPointBuffer in piPs
-extern int sellPivotPointARTTimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellPivotPointARTRange = 30;
-extern int sellPivotPointARTShift = 0;
-extern string PivotPointSectionEnd = "----------------PIVOT POINT-------------";
+string PivotPointSectionStart = "----------------PIVOT POINT-------------";
+int buyPivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
+string buyPivotPointSectionStart = "----------------buy-------------";
+int buyPivotPointMode = 1;//buyPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
+int buyPivotPointLineIndex = -1;//buyPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+int buyPivotDirection = 0;//buyPivotDirection | 0 = < | 1 = >
+int buyPivotPointBuffer = 0;//buyPivotPointBuffer in piPs
+int buyPivotPointATRTimeFrame = PERIOD_D1;//buyPivotPointATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyPivotPointATRPeriod = 30;
+int buyPivotPointATRShift = 0;
+string sellPivotPointSectionStart = "----------------sell-------------";
+int sellPivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
+int sellPivotPointMode = 1;//sellPivotPointMode | -1 = None | 0 = Explicit | 1 = ATR
+int sellPivotPointLineIndex = -1;//sellPivotPointLineIndex | -1 = pp | 0 = r1 | 1 = r2 | 2 = r3 | 3 = s1 | 4 = s2 | 5 = s3
+int sellPivotDirection = 1;//sellPivotDirection | 0 = < | 1 = >
+int sellPivotPointBuffer = 0;//sellPivotPointBuffer in piPs
+int sellPivotPointATRTimeFrame = PERIOD_D1;//sellPivotPointATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellPivotPointATRPeriod = 30;
+int sellPivotPointATRShift = 0;
+string PivotPointSectionEnd = "----------------PIVOT POINT-------------";
 
-extern string MASectionStart = "----------------MA-------------";
-extern string buyMASectionStart = "----------------buy-------------";
-extern int buyMAMode = 1;//buyMAMode | 0 = Explicit | 1 = ATR
-extern int buyMAType = MODE_SMA;//buyMAType | / = MODE_SMA | / = MODE_EMA
-extern int buyMATimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyMAPeriod = 30;
-extern int buyMAShift = 0;
-extern int buyMADirection = 0;//buyMADirection | 0 = < | 1 = >
-extern int buyMABuffer = 25;//buyPivotPointBuffer in piPs
-extern int buyMAARTTimeFrame = PERIOD_D1;//buyPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyMAARTRange = 30;
-extern int buyMAARTShift = 0;
-extern string sellMASectionStart = "----------------sell-------------";
-extern int sellMAMode = 1;//sellMAMode | 0 = Explicit | 1 = ATR
-extern int sellMAType = MODE_SMA;//sellMAType | / = MODE_SMA | / = MODE_EMA
-extern int sellMATimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellMAPeriod = 30;
-extern int sellMAShift = 0;
-extern int sellMADirection = 1;//sellMADirection | 0 = < | 1 = >
-extern int sellMABuffer = 25;//sellPivotPointBuffer in piPs
-extern int sellMAARTTimeFrame = PERIOD_D1;//sellPivotPointARTTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellMAARTRange = 30;
-extern int sellMAARTShift = 0;
-extern string MASectionEnd = "----------------MA-------------";
+string MASectionStart = "----------------MA-------------";
+string buyMASectionStart = "----------------buy-------------";
+int buyMAMode = 1;//buyMAMode | 0 = Explicit | 1 = ATR
+int buyMAType = MODE_SMA;//buyMAType | / = MODE_SMA | / = MODE_EMA
+int buyMATimeFrame = PERIOD_D1;//buyMATimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyMAPeriod = 30;
+int buyMAShift = 0;
+int buyMADirection = 0;//buyMADirection | 0 = < | 1 = >
+int buyMABuffer = 25;//buyMABuffer in piPs
+int buyMAATRTimeFrame = PERIOD_D1;//buyMAATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyMAATRPeriod = 30;
+int buyMAATRShift = 0;
+string sellMASectionStart = "----------------sell-------------";
+int sellMAMode = 1;//sellMAMode | 0 = Explicit | 1 = ATR
+int sellMAType = MODE_SMA;//sellMAType | / = MODE_SMA | / = MODE_EMA
+int sellMATimeFrame = PERIOD_D1;//sellMATimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellMAPeriod = 30;
+int sellMAShift = 0;
+int sellMADirection = 1;//sellMADirection | 0 = < | 1 = >
+int sellMABuffer = 25;//sellMABuffer in piPs
+int sellMAATRTimeFrame = PERIOD_D1;//sellMAATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellMAATRPeriod = 30;
+int sellMAATRShift = 0;
+string MASectionEnd = "----------------MA-------------";
 
-extern string StopLossSectionStart = "----------------STOP LOSS-------------";
-extern string buyStopLossSectionStart = "----------------buy-------------";
-extern int buyStopLossMode = 1;//buyStopLossMode | -1 & 0 = Explicit | 1 = ATR
-extern double buyStopLoss = 250;//buyStopLoss in piPs
-extern int buyStopLossATRTimeFrame = PERIOD_D1;//buyStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyStopLossATRPeriod = 30;
-extern int buyStopLossATRShift = 0;
-extern string sellStopLossSectionStart = "----------------sell-------------";
-extern int sellStopLossMode = 1;//sellStopLossMode | -1 & 0 = Explicit | 1 = ATR
-extern double sellStopLoss = 250;//sellStopLoss in piPs
-extern int sellStopLossATRTimeFrame = PERIOD_D1;//sellStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellStopLossATRPeriod = 30;
-extern int sellStopLossATRShift = 0;
-extern string StopLossSectionEnd = "----------------STOP LOSS-------------";
+string StopLossSectionStart = "----------------STOP LOSS-------------";
+string buyStopLossSectionStart = "----------------buy-------------";
+int buyStopLossMode = 1;//buyStopLossMode | -1 & 0 = Explicit | 1 = ATR
+double buyStopLossBuffer = 250;//buyStopLoss in piPs
+int buyStopLossATRTimeFrame = PERIOD_D1;//buyStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyStopLossATRPeriod = 30;
+int buyStopLossATRShift = 0;
+string sellStopLossSectionStart = "----------------sell-------------";
+int sellStopLossMode = 1;//sellStopLossMode | -1 & 0 = Explicit | 1 = ATR
+double sellStopLossBuffer = 250;//sellStopLoss in piPs
+int sellStopLossATRTimeFrame = PERIOD_D1;//sellStopLossATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellStopLossATRPeriod = 30;
+int sellStopLossATRShift = 0;
+string StopLossSectionEnd = "----------------STOP LOSS-------------";
 
-extern string TakeProfitSectionStart = "----------------TAKE PROFIT-------------";
-extern string buyTakeProfitSectionStart = "----------------buy-------------";
-extern int buyTakeProfitMode = 1;//buyTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
-extern double buyTakeProfit = 10;//buyTakeProfit in piPs
-extern int buyTakeProfitATRTimeFrame = PERIOD_D1;//buyTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyTakeProfitATRPeriod = 30;
-extern int buyTakeProfitATRShift = 0;
-extern string sellTakeProfitSectionStart = "----------------sell-------------";
-extern int sellTakeProfitMode = 1;//sellTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
-extern double sellTakeProfit = 10;//sellTakeProfit in piPs
-extern int sellTakeProfitATRTimeFrame = PERIOD_D1;//sellTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellTakeProfitATRPeriod = 30;
-extern int sellTakeProfitATRShift = 0;
-extern string TakeProfitSectionEnd = "----------------TAKE PROFIT-------------";
+string TakeProfitSectionStart = "----------------TAKE PROFIT-------------";
+string buyTakeProfitSectionStart = "----------------buy-------------";
+int buyTakeProfitMode = 1;//buyTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
+double buyTakeProfitBuffer = 10;//buyTakeProfit in piPs
+int buyTakeProfitATRTimeFrame = PERIOD_D1;//buyTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyTakeProfitATRPeriod = 30;
+int buyTakeProfitATRShift = 0;
+string sellTakeProfitSectionStart = "----------------sell-------------";
+int sellTakeProfitMode = 1;//sellTakeProfitMode | -1 & 0 = Explicit | 1 = ATR
+double sellTakeProfitBuffer = 10;//sellTakeProfit in piPs
+int sellTakeProfitATRTimeFrame = PERIOD_D1;//sellTakeProfitATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellTakeProfitATRPeriod = 30;
+int sellTakeProfitATRShift = 0;
+string TakeProfitSectionEnd = "----------------TAKE PROFIT-------------";
 
-extern string PipStepSectionStart = "----------------PIP STEP-------------";
-extern string buyPipStepSectionStart = "----------------buy-------------";
-extern int buyPipStepMode = 1;//buyPipStepMode | -1 = Explicit | 1 = ATR
-extern int buyPS = 100;//buyPS in piPs
-extern int buyPipStepATRTimeFrame = PERIOD_D1;//buyPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int buyPipStepATRPeriod = 30;
-extern int buyPipStepATRShift = 0;
-extern string sellPipStepSectionStart = "----------------sell-------------";
-extern int sellPipStepMode = 1;//sellPipStepMode | -1 = Explicit | 1 = ATR
-extern int sellPS = 100;//sellPS in piPs
-extern int sellPipStepATRTimeFrame = PERIOD_D1;//sellPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
-extern int sellPipStepATRPeriod = 30;
-extern int sellPipStepATRShift = 0;
-extern string PipStepSectionEnd = "----------------PIP STEP-------------";
+string PipStepSectionStart = "----------------PIP STEP-------------";
+string buyPipStepSectionStart = "----------------buy-------------";
+int buyPipStepMode = 1;//buyPipStepMode | -1 = Explicit | 1 = ATR
+int buyPSBuffer = 100;//buyPS in piPs
+int buyPipStepATRTimeFrame = PERIOD_D1;//buyPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int buyPipStepATRPeriod = 30;
+int buyPipStepATRShift = 0;
+string sellPipStepSectionStart = "----------------sell-------------";
+int sellPipStepMode = 1;//sellPipStepMode | -1 = Explicit | 1 = ATR
+int sellPSBuffer = 100;//sellPS in piPs
+int sellPipStepATRTimeFrame = PERIOD_D1;//sellPipStepATRTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1
+int sellPipStepATRPeriod = 30;
+int sellPipStepATRShift = 0;
+string PipStepSectionEnd = "----------------PIP STEP-------------";
 
-extern string EmptyOrderSectionStart = "----------------EMPTY ORDER MODE-------------";
-extern string buyEmptyOrderSectionStart = "----------------buy-------------";
-extern int buyEmptyOrderMode = 0; //buyEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
-extern double buyLimitBuffer = 50;//buyLimitBuffer in piPs
-extern double buyStopBuffer = 50;//buyStopBuffer in piPs
-extern string sellEmptyOrderSectionStart = "----------------sell-------------";
-extern int sellEmptyOrderMode = 0; //sellEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
-extern double sellLimitBuffer = 50;//sellLimitBuffer in piPs
-extern double sellStopBuffer = 50;//sellStopBuffer in piPs
-extern string EmptyOrderSectionEnd = "----------------EMPTY ORDER MODE-------------";
+string EmptyOrderSectionStart = "----------------EMPTY ORDER MODE-------------";
+string buyEmptyOrderSectionStart = "----------------buy-------------";
+int buyEmptyOrderMode = 0; //buyEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
+double buyLimitBuffer = 50;//buyLimitBuffer in piPs
+double buyStopBuffer = 50;//buyStopBuffer in piPs
+string sellEmptyOrderSectionStart = "----------------sell-------------";
+int sellEmptyOrderMode = 0; //sellEmptyOrderMode | 0 = Market | 1 = LIMIT | 2 = STOP
+double sellLimitBuffer = 50;//sellLimitBuffer in piPs
+double sellStopBuffer = 50;//sellStopBuffer in piPs
+string EmptyOrderSectionEnd = "----------------EMPTY ORDER MODE-------------";
 
 double buyPivotPointLine = 0;
 double sellPivotPointLine = 0;
+
+datetime barTime=0;
 
 //Global Variables
 double UsePoint;
@@ -147,15 +150,50 @@ void OnDeinit(const int reason)
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 
+bool useLondonSession = true;
+string londonSessionStartString = "07:00";
+string londonSessionEndString = "17:00";
+datetime londonSessionStart = 0;
+datetime londonSessionEnd=0;
+bool inLondonSession = false;
+
+bool useAmericaSession = true;
+string americaSessionStartString = "13:00";
+string americaSessionEndString = "23:00";
+datetime americaSessionStart = 0;
+datetime americaSessionEnd=0;
+bool inAmericaSession = false;
+
+string InpFileName="Sym.txt"; // file name
+input string InpDirectoryName="Data"; // directory name
+string sym;
+int bars;
 void OnTick()
   {
 //----  
-   getPivots();
-   buyPivotPointLine = getPivotValue(buyPivotPointLineIndex);
-   sellPivotPointLine = getPivotValue(sellPivotPointLineIndex);
+   sym = Symbol();
+   StringReplace(sym, "i", "");
+   InpFileName = sym + ".txt";
+   if (bars != Bars){
+      readFile();
+      bars = Bars;
+      getBuyPivots();
+      getSellPivots();
+   }
+   barTime = Time[0];
+   londonSessionStart = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + londonSessionStartString);
+   londonSessionEnd = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + londonSessionEndString);
+   americaSessionStart = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + americaSessionStartString);
+   americaSessionEnd = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + americaSessionEndString);
+   buyPivotPointLine = getBuyPivotValue(buyPivotPointLineIndex);
+   sellPivotPointLine = getSellPivotValue(sellPivotPointLineIndex);
+   inLondonSession = isInSession(londonSessionStart,londonSessionEnd,useLondonSession);
+   inAmericaSession = isInSession(americaSessionStart,americaSessionEnd,useAmericaSession);
    if (canOpenBuy() &&
        buyPivotPointLogic() && 
-       buyMALogic()){
+       buyMALogic() &&
+       inLondonSession == false &&
+       inAmericaSession == false){
       switch(buyEmptyOrderMode){
          case 1:
             if(getBuyTradeCount(OP_BUYLIMIT) == 0){
@@ -178,7 +216,9 @@ void OnTick()
    }
    if (canOpenSell() &&
        sellPivotPointLogic() &&
-       sellMALogic()){
+       sellMALogic() &&
+       isInSession(londonSessionStart,londonSessionEnd,useLondonSession) == false &&
+       isInSession(americaSessionStart,americaSessionEnd,useAmericaSession) == false){
       switch(sellEmptyOrderMode){
          case 1:
             if(getSellTradeCount(OP_SELLLIMIT) == 0){
@@ -199,6 +239,14 @@ void OnTick()
             break;
       }
    }
+   
+   //closeSellOrdersInProfit();
+   //closeSellOrdersInLoss();
+   
+   //closeBuyOrdersInProfit();
+   //closeBuyOrdersInLoss();
+      
+   
    if (sellTakeProfitMode > -1){
       closeSellOrdersInProfit();
       closeSellOrdersInLoss();
@@ -208,6 +256,7 @@ void OnTick()
       closeBuyOrdersInLoss();
    }
    hud();
+   
   }
 //+------------------------------------------------------------------+
 double PipPoint(string Currency)
@@ -230,23 +279,25 @@ int GetSlippaage(string Currency, int SlippagePips)
 
 //-----BUY Stop Loss
 
-double GetBuyStopLoss(double OpenPrice){
-   double _buyStopLoss = OpenPrice - (buyStopLoss * UsePoint);
+double GetBuyStopLoss(double OpenPrice, int sender){
+   double _buyStopLoss = OpenPrice - (buyStopLossBuffer * UsePoint);
    switch(buyStopLossMode){
       case 0:
-         if(OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
-            return (buyStopLoss * UsePoint);
          }
+         if (sender == 1){
+            return (buyStopLossBuffer * UsePoint);
+         } 
       case 1:
-         if(OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
+         }
+         if (sender == 1){
             return getATR(buyStopLossATRTimeFrame,buyStopLossATRPeriod,buyStopLossATRShift);
-         }          
+         }         
       default:
-         return _buyStopLoss;
+         return 0;
    }
 }
 
@@ -254,23 +305,25 @@ double GetBuyStopLoss(double OpenPrice){
 
 //-----Sell Stop Loss
 
-double GetSellStopLoss(double OpenPrice){
-   double _sellStopLoss = OpenPrice + (sellStopLoss * UsePoint);
+double GetSellStopLoss(double OpenPrice, int sender){
+   double _sellStopLoss = OpenPrice + (sellStopLossBuffer * UsePoint);
    switch(sellStopLossMode){
       case 0:
-         if(OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
-            return (sellStopLoss * UsePoint);
-         }      
-      case 1:
-         if(OpenPrice > 0){
+         }
+         if (sender == 1){
+            return (sellStopLossBuffer * UsePoint);
+         }    
+      case 1:     
+         if (sender == 0){
             return 0;
-         }else{
+         }
+         if (sender == 1){
             return getATR(sellStopLossATRTimeFrame,sellStopLossATRPeriod,sellStopLossATRShift);
-         }       
+         }      
       default:         
-         return _sellStopLoss;
+         return 0;
    }
 }
 
@@ -278,47 +331,51 @@ double GetSellStopLoss(double OpenPrice){
 
 //-----BUY Take Profit
 
-double GetBuyTakeProfit(double OpenPrice){
-   double _buyTakeProfit = OpenPrice + (buyTakeProfit * UsePoint);
+double GetBuyTakeProfit(double OpenPrice, int sender){
+   double _buyTakeProfit = OpenPrice + (buyTakeProfitBuffer * UsePoint);
    switch(buyTakeProfitMode){
       case 0:
-         if(OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
-            return (buyTakeProfit * UsePoint);
          }
-      case 1: 
-         if(OpenPrice > 0){
+         if (sender == 1){
+            return (buyTakeProfitBuffer * UsePoint);
+         }
+      case 1:
+         if (sender == 0){
             return 0;
-         }else{
+         }
+         if (sender == 1){
             return getATR(buyTakeProfitATRTimeFrame,buyTakeProfitATRPeriod,buyTakeProfitATRShift);
          }      
       default:
-         return _buyTakeProfit; 
+         return 0; 
    }
 }
 
 //-----BUY Take Profit
 
 //-----SELL Take Profit
-
-double GetSellTakeProfit(double OpenPrice){
-   double _sellTakeProfit = OpenPrice - (sellTakeProfit * UsePoint);
+//sender who is calling the method. 0 = open order | 1 = close order
+double GetSellTakeProfit(double OpenPrice, int sender){
+   double _sellTakeProfit = OpenPrice - (sellTakeProfitBuffer * UsePoint);
    switch(sellTakeProfitMode){
       case 0:
-         if (OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
-            return (sellTakeProfit * UsePoint);
-         }  
+         }
+         if (sender == 1){
+            return (sellTakeProfitBuffer * UsePoint);
+         }
       case 1:
-         if (OpenPrice > 0){
+         if (sender == 0){
             return 0;
-         }else{
+         }
+         if (sender == 1){
             return getATR(buyTakeProfitATRTimeFrame,buyTakeProfitATRPeriod,buyTakeProfitATRShift);
-         }       
+         }  
       default:
-         return _sellTakeProfit;  
+         return 0;  
    }
 }
 
@@ -376,8 +433,8 @@ void openBuy(int inBuyOrderType) {
    }
    RefreshRates();
    double orderPrice = getBuyOrderPrice(inBuyOrderType);
-   double takeprofit = GetBuyTakeProfit(orderPrice);
-   double stoploss = GetBuyStopLoss(orderPrice);
+   double takeprofit = GetBuyTakeProfit(orderPrice,0);
+   double stoploss = GetBuyStopLoss(orderPrice,0);
    double buy_lots = getBuyLotSize();
    int ticket = OrderSend(Symbol(), inBuyOrderType, buy_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 10000, 0, Blue);
    if (ticket > 0) {
@@ -402,8 +459,8 @@ void openSell(int inSellOrderType) {
    }
    RefreshRates();
    double orderPrice = getSellOrderPrice(inSellOrderType);
-   double takeprofit = GetSellTakeProfit(orderPrice);
-   double stoploss = GetSellStopLoss(orderPrice);
+   double takeprofit = GetSellTakeProfit(orderPrice,0);
+   double stoploss = GetSellStopLoss(orderPrice,0);
    double sell_lots = getSellLotSize();
    int ticket = OrderSend(Symbol(), inSellOrderType, sell_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 20000, 0, Red);
    if (ticket > 0) {
@@ -508,7 +565,7 @@ void closeBuyOrdersInProfit() {
             bool closed = false;
             double takeprofit;
             bool timeToClose = false;
-            takeprofit = OrderOpenPrice() + GetBuyTakeProfit(0);
+            takeprofit = OrderOpenPrice() + GetBuyTakeProfit(0,1);
             if (Bid >= takeprofit) {
                 closed = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Violet);
                 if (!closed) {
@@ -529,7 +586,7 @@ void closeSellOrdersInProfit() {
             while (IsTradeContextBusy()) Sleep(10);
             RefreshRates();
             bool closed = false;
-            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0);
+            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0,1);
             if (Ask <= takeprofit) {
                closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
                if (!closed) {
@@ -551,7 +608,7 @@ void closeSellOrdersInLoss() {
             while (IsTradeContextBusy()) Sleep(10);
             RefreshRates();
             bool closed = false;
-            double stoploss = OrderOpenPrice() + GetSellStopLoss(0);
+            double stoploss = OrderOpenPrice() + GetSellStopLoss(0,1);
             if (Ask >= stoploss) {
                closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
                if (!closed) {
@@ -574,7 +631,7 @@ void closeBuyOrdersInLoss() {
             RefreshRates();
             bool closed = false;
             bool timeToClose = false;
-            double stoploss = OrderOpenPrice() - GetBuyStopLoss(0);
+            double stoploss = OrderOpenPrice() - GetBuyStopLoss(0,1);
             if (Bid <= stoploss) {
                 closed = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Violet);
                 if (!closed) {
@@ -689,49 +746,82 @@ double getATR(int timeframe, int period, int shift) {
 double getBuyPs(){
    switch(buyPipStepMode){
       case 0:
+         return buyPSBuffer * UsePoint;
+      case 1:
          return getATR(buyPipStepATRTimeFrame,buyPipStepATRPeriod,buyPipStepATRShift);
       default:
-         return buyPS * UsePoint;
+         return -1;
    }
 }
 
 double getSellPs(){
    switch(sellPipStepMode){
       case 0:
+         return sellPSBuffer * UsePoint;
+      case 1:
          return getATR(sellPipStepATRTimeFrame,sellPipStepATRPeriod,sellPipStepATRShift);
       default:
-         return sellPS * UsePoint;
+         return -1;
    }
 }
 
 
-double pivotPoint;
-double r1;
-double r2;
-double r3;
-double s1;
-double s2;
-double s3;
+double buypivotPoint;
+double buyr1;
+double buyr2;
+double buyr3;
+double buys1;
+double buys2;
+double buys3;
 
-void getPivots(){
-   double close = iClose(NULL,pivotTimeFrame,1);
-   double high = iHigh(NULL,pivotTimeFrame,1);
-   double low = iLow(NULL,pivotTimeFrame,1);
-   pivotPoint = (high + low + close) / 3;
-   r1 = (2 * pivotPoint) - low;
-   s1 = (2 * pivotPoint) - high;
-   r2 = (pivotPoint - s1) + r1;
-   s2 = pivotPoint - (r1 - s1);
-   r3 = (pivotPoint - s2) + r2;
-   s3 = pivotPoint - (r2 - s2);
+double sellpivotPoint;
+double sellr1;
+double sellr2;
+double sellr3;
+double sells1;
+double sells2;
+double sells3;
+
+void getBuyPivots(){
+   double close = iClose(NULL,buyPivotTimeFrame,1);
+   double high = iHigh(NULL,buyPivotTimeFrame,1);
+   double low = iLow(NULL,buyPivotTimeFrame,1);
+   buypivotPoint = (high + low + close) / 3;
+   buyr1 = (2 * buypivotPoint) - low;
+   buys1 = (2 * buypivotPoint) - high;
+   buyr2 = (buypivotPoint - buys1) + buyr1;
+   buys2 = buypivotPoint - (buyr1 - buys1);
+   buyr3 = (buypivotPoint - buys2) + buyr2;
+   buys3 = buypivotPoint - (buyr2 - buys2);
    
-   drawLine("dailyPivotPoint",pivotPoint,24,clrYellow);
-   drawLine("r1",r1,24,clrDeepSkyBlue);
-   drawLine("r2",r2,24,clrDodgerBlue);
-   drawLine("r3",r3,24,clrBlue);
-   drawLine("s1",s1,24,clrLightPink);
-   drawLine("s2",s2,24,clrDeepPink);
-   drawLine("s3",s3,24,clrRed);
+   drawLine("buyPivotPoint",buypivotPoint,24,clrYellow);
+   drawLine("buyr1",buyr1,24,clrDeepSkyBlue);
+   drawLine("buyr2",buyr2,24,clrDodgerBlue);
+   drawLine("buyr3",buyr3,24,clrBlue);
+   drawLine("buys1",buys1,24,clrLightPink);
+   drawLine("buys2",buys2,24,clrDeepPink);
+   drawLine("buys3",buys3,24,clrRed);
+}
+
+void getSellPivots(){
+   double close = iClose(NULL,sellPivotTimeFrame,1);
+   double high = iHigh(NULL,sellPivotTimeFrame,1);
+   double low = iLow(NULL,sellPivotTimeFrame,1);
+   sellpivotPoint = (high + low + close) / 3;
+   sellr1 = (2 * sellpivotPoint) - low;
+   sells1 = (2 * sellpivotPoint) - high;
+   sellr2 = (sellpivotPoint - sells1) + sellr1;
+   sells2 = sellpivotPoint - (sellr1 - sells1);
+   sellr3 = (sellpivotPoint - sells2) + sellr2;
+   sells3 = sellpivotPoint - (sellr2 - sells2);
+   
+   drawLine("sellPivotPoint",sellpivotPoint,24,clrYellow);
+   drawLine("sellr1",sellr1,24,clrDeepSkyBlue);
+   drawLine("sellr2",sellr2,24,clrDodgerBlue);
+   drawLine("sellr3",sellr3,24,clrBlue);
+   drawLine("sells1",sells1,24,clrLightPink);
+   drawLine("sells2",sells2,24,clrDeepPink);
+   drawLine("sells3",sells3,24,clrRed);
 }
 
 void drawLine(string objectName, double price, int length, color objColor){
@@ -764,7 +854,7 @@ bool checkDirection(int direction, double inLine, double inPrice){
 bool buyPivotPointLogic(){
    double priceDiff = MathAbs(Ask - buyPivotPointLine);
    if (buyPivotPointMode < 0)
-      return false;
+      return true;
    if (checkDirection(buyPivotDirection,buyPivotPointLine,Ask)){
       switch(buyPivotPointMode){
          case 0:
@@ -774,7 +864,7 @@ bool buyPivotPointLogic(){
                return false;
             }
          case 1:
-            if(priceDiff > getATR(buyPivotPointARTTimeFrame,buyPivotPointARTRange,buyPivotPointARTShift)){
+            if(priceDiff > getATR(buyPivotPointATRTimeFrame,buyPivotPointATRPeriod,buyPivotPointATRShift)){
                return true;
             }else{
                return false;
@@ -788,7 +878,7 @@ bool buyMALogic(){
    double buyMA = getSMA(buyMATimeFrame,buyMAPeriod,buyMAShift,buyMAType);
    double priceDiff = MathAbs(Ask - buyMA);
    if (buyMAMode < 0)
-      return false;
+      return true;
    if (checkDirection(buyMADirection,buyMA,Ask)){
       switch(buyMAMode){
          case 0:
@@ -798,7 +888,7 @@ bool buyMALogic(){
                return false;
             }
          case 1:
-            if(priceDiff > getATR(buyMAARTTimeFrame,buyMAARTRange,buyMAARTShift)){
+            if(priceDiff > getATR(buyMAATRTimeFrame,buyMAATRPeriod,buyMAATRShift)){
                return true;
             }else{
                return false;
@@ -811,7 +901,7 @@ bool buyMALogic(){
 bool sellPivotPointLogic(){
    double priceDiff = MathAbs(Bid - sellPivotPointLine);
    if (sellPivotPointMode < 0)
-      return false;
+      return true;
    if (checkDirection(sellPivotDirection,sellPivotPointLine,Bid)){
       switch(sellPivotPointMode){
          case 0:
@@ -821,7 +911,7 @@ bool sellPivotPointLogic(){
                return false;
             }
          case 1:
-            if(priceDiff > getATR(sellPivotPointARTTimeFrame,sellPivotPointARTRange,sellPivotPointARTShift)){
+            if(priceDiff > getATR(sellPivotPointATRTimeFrame,sellPivotPointATRPeriod,sellPivotPointATRShift)){
                return true;
             }else{
                return false;
@@ -835,7 +925,7 @@ bool sellMALogic(){
    double sellMA = getSMA(sellMATimeFrame,sellMAPeriod,sellMAShift,sellMAType);
    double priceDiff = MathAbs(Bid - sellMA);
    if (sellMAMode < 0)
-      return false;
+      return true;
    if (checkDirection(sellMADirection,sellMA,Bid)){
       switch(sellMAMode){
          case 0:
@@ -845,7 +935,7 @@ bool sellMALogic(){
                return false;
             }
          case 1:
-            if(priceDiff > getATR(sellMAARTTimeFrame,sellMAARTRange,sellMAARTShift)){
+            if(priceDiff > getATR(sellMAATRTimeFrame,sellMAATRPeriod,sellMAATRShift)){
                return true;
             }else{
                return false;
@@ -855,40 +945,152 @@ bool sellMALogic(){
    return false;
 }
 
-double getPivotValue(int inLineIndex){
+double getBuyPivotValue(int inLineIndex){
    switch(inLineIndex){
       default:
-         return pivotPoint;
+         return buypivotPoint;
       case 0:
-         return r1;
+         return buyr1;
       case 1:
-         return r2;
+         return buyr2;
       case 2:
-         return r3;
+         return buyr3;
       case 3:
-         return s1;
+         return buys1;
       case 4:
-         return s2;
+         return buys2;
       case 5:
-         return s3;                                    
+         return buys3;                                    
+   }
+}
+
+double getSellPivotValue(int inLineIndex){
+   switch(inLineIndex){
+      default:
+         return sellpivotPoint;
+      case 0:
+         return sellr1;
+      case 1:
+         return sellr2;
+      case 2:
+         return sellr3;
+      case 3:
+         return sells1;
+      case 4:
+         return sells2;
+      case 5:
+         return sells3;                                    
    }
 }
 
 void hud() {
-    double buy_psPoint = buyPS * UsePoint;  
-    double sell_psPoint = sellPS * UsePoint;
+    double buy_psPoint = buyPSBuffer * UsePoint;  
+    double sell_psPoint = sellPSBuffer * UsePoint;
     
-    double buy_tp = GetBuyTakeProfit(0);
-    double sell_tp = GetSellTakeProfit(0);
+    double buy_tp = GetBuyTakeProfit(0,1);
+    double sell_tp = GetSellTakeProfit(0,1);
     
-    double buy_sl = GetBuyStopLoss(0);
-    double sell_sl = GetSellStopLoss(0);
+    double buy_sl = GetBuyStopLoss(0,1);
+    double sell_sl = GetSellStopLoss(0,1);
     
     double buy_lots = getBuyLotSize();
     double sell_lots = getSellLotSize();
     
     Comment(
-        "ForexRootkitBandsDual v." + DoubleToString(version) , "\n",      
+        "ForexRootkitBandsDual v." + DoubleToString(version) , "\n",
+        /**
+        "slippage = " + IntegerToString(slippage) + "\n" +   
+        "minLotSize = " + DoubleToString(minLotSize) + "\n" +
+        "buyRiskStep = " + IntegerToString(buyRiskStep) + "\n" +
+        "sellRiskStep = " + IntegerToString(sellRiskStep) + "\n" +
+        "maxLotSize = " + DoubleToString(maxLotSize) + "\n" +
+        
+        "buyPivotTimeFrame = " + IntegerToString(buyPivotTimeFrame) + "\n" +
+        "buyPivotPointMode = " + IntegerToString(buyPivotPointMode) + "\n" +
+        "buyPivotPointLineIndex = " + IntegerToString(buyPivotPointLineIndex) + "\n" +
+        "buyPivotDirection = " + IntegerToString(buyPivotDirection) + "\n" +
+        "buyPivotPointBuffer = " + IntegerToString(buyPivotPointBuffer) + "\n" +
+        "buyPivotPointATRTimeFrame = " + IntegerToString(buyPivotPointATRTimeFrame) + "\n" +
+        "buyPivotPointATRPeriod = " + IntegerToString(buyPivotPointATRPeriod) + "\n" +
+        "buyPivotPointATRShift = " + IntegerToString(buyPivotPointATRShift) + "\n" +
+        
+        "sellpivotTimeFrame = " + IntegerToString(sellPivotTimeFrame) + "\n" +
+        "sellPivotPointMode = " + IntegerToString(sellPivotPointMode) + "\n" +
+        "sellPivotPointLineIndex = " + IntegerToString(sellPivotPointLineIndex) + "\n" +
+        "sellPivotDirection = " + IntegerToString(sellPivotDirection) + "\n" +
+        "sellPivotPointBuffer = " + IntegerToString(sellPivotPointBuffer) + "\n" +
+        "sellPivotPointATRTimeFrame = " + IntegerToString(sellPivotPointATRTimeFrame) + "\n" +
+        "sellPivotPointATRPeriod = " + IntegerToString(sellPivotPointATRPeriod) + "\n" +
+        "sellPivotPointATRShift = " + IntegerToString(sellPivotPointATRShift) + "\n" +
+           
+        "buyMAMode = " + IntegerToString(buyMAMode) + "\n" +  
+        "buyMAType = " + IntegerToString(buyMAType) + "\n" +
+        "buyMATimeFrame = " + IntegerToString(buyMATimeFrame) + "\n" +
+        "buyMAPeriod = " + IntegerToString(buyMAPeriod) + "\n" +
+        "buyMAShift = " + IntegerToString(buyMAShift) + "\n" +
+        "buyMADirection = " + IntegerToString(buyMADirection) + "\n" +
+        "buyMABuffer = " + IntegerToString(buyMABuffer) + "\n" +
+        "buyMAATRTimeFrame = " + IntegerToString(buyMAATRTimeFrame) + "\n" +
+        "buyMAATRPeriod = " + IntegerToString(buyMAATRPeriod) + "\n" +
+        "buyMAATRShift = " + IntegerToString(buyMAATRShift) + "\n" +     
+        "sellMAMode = " + IntegerToString(sellMAMode) + "\n" +  
+        "sellMAType = " + IntegerToString(sellMAType) + "\n" +
+        "sellMATimeFrame = " + IntegerToString(sellMATimeFrame) + "\n" +
+        "sellMAPeriod = " + IntegerToString(sellMAPeriod) + "\n" +
+        "sellMAShift = " + IntegerToString(sellMAShift) + "\n" +
+        "sellMADirection = " + IntegerToString(sellMADirection) + "\n" +
+        "sellMABuffer = " + IntegerToString(sellMABuffer) + "\n" +
+        "sellMAATRTimeFrame = " + IntegerToString(sellMAATRTimeFrame) + "\n" +
+        "sellMAATRPeriod = " + IntegerToString(sellMAATRPeriod) + "\n" +
+        "sellMAATRShift = " + IntegerToString(sellMAATRShift) + "\n" +                  
+        "buyStopLossMode = " + IntegerToString(buyStopLossMode) + "\n" +
+        "buyStopLossBuffer = " + IntegerToString(buyStopLossBuffer) + "\n" +
+        "buyStopLossATRTimeFrame = " + IntegerToString(buyStopLossATRTimeFrame) + "\n" +
+        "buyStopLossATRPeriod = " + IntegerToString(buyStopLossATRPeriod) + "\n" +
+        "buyStopLossATRShift = " + IntegerToString(buyStopLossATRShift) + "\n" +      
+        "sellStopLossMode = " + IntegerToString(sellStopLossMode) + "\n" +
+        "sellStopLossBuffer = " + IntegerToString(sellStopLossBuffer) + "\n" +
+        "sellStopLossATRTimeFrame = " + IntegerToString(sellStopLossATRTimeFrame) + "\n" +
+        "sellStopLossATRPeriod = " + IntegerToString(sellStopLossATRPeriod) + "\n" +
+        "sellStopLossATRShift = " + IntegerToString(sellStopLossATRShift) + "\n" +             
+        "buyTakeProfitMode = " + IntegerToString(buyTakeProfitMode) + "\n" +
+        "buyTakeProfitBuffer = " + IntegerToString(buyTakeProfitBuffer) + "\n" +
+        "buyTakeProfitATRTimeFrame = " + IntegerToString(buyTakeProfitATRTimeFrame) + "\n" +
+        "buyTakeProfitATRPeriod = " + IntegerToString(buyTakeProfitATRPeriod) + "\n" +
+        "buyTakeProfitATRShift = " + IntegerToString(buyTakeProfitATRShift) + "\n" +      
+        "sellTakeProfitMode = " + IntegerToString(sellTakeProfitMode) + "\n" +
+        "sellTakeProfitBuffer = " + IntegerToString(sellTakeProfitBuffer) + "\n" +
+        "sellTakeProfitATRTimeFrame = " + IntegerToString(sellTakeProfitATRTimeFrame) + "\n" +
+        "sellTakeProfitATRPeriod = " + IntegerToString(sellTakeProfitATRPeriod) + "\n" +
+        "sellTakeProfitATRShift = " + IntegerToString(sellTakeProfitATRShift) + "\n" +       
+        "buyPipStepMode = " + IntegerToString(buyPipStepMode) + "\n" +
+        "buyPSBuffer = " + IntegerToString(buyPSBuffer) + "\n" +
+        "buyPipStepATRTimeFrame = " + IntegerToString(buyPipStepATRTimeFrame) + "\n" +
+        "buyPipStepATRPeriod = " + IntegerToString(buyPipStepATRPeriod) + "\n" +
+        "buyPipStepATRShift = " + IntegerToString(buyPipStepATRShift) + "\n" +      
+        "sellPipStepMode = " + IntegerToString(sellPipStepMode) + "\n" +
+        "sellPSBuffer = " + IntegerToString(sellPSBuffer) + "\n" +
+        "sellPipStepATRTimeFrame = " + IntegerToString(sellPipStepATRTimeFrame) + "\n" +
+        "sellPipStepATRPeriod = " + IntegerToString(sellPipStepATRPeriod) + "\n" +
+        "sellPipStepATRShift = " + IntegerToString(sellPipStepATRShift) + "\n" +
+        
+        "buyEmptyOrderMode = " + IntegerToString(buyEmptyOrderMode) + "\n" +
+        "buyLimitBuffer = " + IntegerToString(buyLimitBuffer) + "\n" +
+        "buyStopBuffer = " + IntegerToString(buyStopBuffer) + "\n" +      
+        "sellEmptyOrderMode = " + IntegerToString(sellEmptyOrderMode) + "\n" +
+        "sellLimitBuffer = " + IntegerToString(sellLimitBuffer) + "\n" +
+        "sellStopBuffer = " + IntegerToString(sellStopBuffer) + "\n" +
+        
+        "useLondonSession = " + IntegerToString(useLondonSession) + "\n" +
+        "useAmericaSession = " + IntegerToString(useAmericaSession) + "\n" +**/
+              
+        "bar Time = " + TimeToStr(barTime) + "\n" +
+        "londonSessionStart = " + TimeToStr(londonSessionStart) + "\n" + 
+        "londonSessionEnd = " + TimeToStr(londonSessionEnd) + "\n" +
+        "inLondonSession = " + IntegerToString(inLondonSession) + "\n" + 
+        "americaSessionStart = " + TimeToStr(americaSessionStart) + "\n" + 
+        "americaSessionEnd = " + TimeToStr(americaSessionEnd) + "\n" +
+        "AmericaSession = " + IntegerToString(inAmericaSession) + "\n" +
         "enabled = " + IntegerToString(IsExpertEnabled()) + "\n" +
         "trade allowed = " + IntegerToString(IsTradeAllowed()) + "\n" +
         "optimization = " + IntegerToString(IsOptimization()) + "\n" +
@@ -898,7 +1100,7 @@ void hud() {
         "connected = " + IntegerToString(IsConnected()) + "\n\n" +     
         "buy_lots = " + DoubleToStr(buy_lots, 2) + ", sell_lots = " + DoubleToStr(sell_lots, 2), "\n",
         "buy rs = " + IntegerToString(buyRiskStep) + ", sell_rs = " + IntegerToString(sellRiskStep), "\n",        
-        "buy_ps = " + IntegerToString(buyPS) + ", sell_ps = " + IntegerToString(sellPS), "\n",
+        "buy_ps = " + IntegerToString(buyPSBuffer) + ", sell_ps = " + IntegerToString(sellPSBuffer), "\n",
         "buy_tp = " + DoubleToStr(buy_tp, 0) + ", sell_tp = " + DoubleToStr(sell_tp, 0), "\n",
         "buy_sl = " + DoubleToStr(buy_sl, 0) + ", sell_sl = " + DoubleToStr(sell_sl, 0), "\n",
         "bid = "  + DoubleToStr(Bid, 4), "\n",
@@ -921,4 +1123,314 @@ void hud() {
 
 double getSMA (int inTimeframe, int inSmaPeriod, int inSmaShift, int inMode){
    return (iMA(NULL,inTimeframe,inSmaPeriod,inSmaShift,inMode,PRICE_MEDIAN,0));
+}
+
+bool isInSession(datetime inSessionStart, datetime inSessionEnd, bool inUseSession){
+   if(inUseSession == false)
+      return true;
+   if (barTime > inSessionStart &&
+       barTime < inSessionEnd){
+       return true;
+   }
+   return false;
+}
+
+void processProperty(string stringToParse){
+   Print("processing property");
+   //Print("...processProperty Open...");
+   string to_split=stringToParse;   // A string to split into substrings
+   string sep="=";                // A separator as a character
+   ushort u_sep;                  // The code of the separator character
+   string result[];               // An array to get strings
+   //Print("...local Properties Created...");
+   //--- Get the separator code
+   u_sep=StringGetCharacter(sep,0);
+   //--- Split the string to substrings
+   int k=StringSplit(to_split,u_sep,result);
+   //--- Show a comment 
+   //PrintFormat("Strings obtained: %d. Used separator '%s' with the code %d",k,sep,u_sep);
+   //--- Now output all obtained strings
+   if(k>0)
+   {
+      for(int i=0;i<k;i++)
+      {
+         //PrintFormat("result[%d]=%s",i,result[i]);
+      }
+   }
+   string prop = result[0];
+   if (prop == "slippage"){
+      slippage = StringToInteger(result[1]);
+   }
+   if (prop == "minLotSize"){
+      minLotSize = StringToDouble(result[1]);
+   }
+   if (prop == "buyRiskStep"){
+      buyRiskStep = StringToInteger(result[1]);
+   }
+   if (prop == "sellRiskStep"){
+      sellRiskStep = StringToInteger(result[1]);
+   }
+   if (prop == "maxLotSize"){
+      maxLotSize = StringToDouble(result[1]);
+   }   
+   if (prop == "buyPivotTimeFrame"){
+      buyPivotTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointMode"){
+      buyPivotPointMode = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointLineIndex"){
+      buyPivotPointLineIndex = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotDirection"){
+      buyPivotDirection = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointBuffer"){
+      buyPivotPointBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointATRTimeFrame"){
+      buyPivotPointATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointATRPeriod"){
+      buyPivotPointATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyPivotPointATRShift"){
+      buyPivotPointATRShift = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotTimeFrame"){
+      sellPivotTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointMode"){
+      sellPivotPointMode = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointLineIndex"){
+      sellPivotPointLineIndex = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotDirection"){
+      sellPivotDirection = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointBuffer"){
+      sellPivotPointBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointATRTimeFrame"){
+      sellPivotPointATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointATRPeriod"){
+      sellPivotPointATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellPivotPointATRShift"){
+      sellPivotPointATRShift = StringToInteger(result[1]);
+   }   
+   if (prop == "buyMAMode"){
+      buyMAMode = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAType"){
+      buyMAType = StringToInteger(result[1]);
+   }
+   if (prop == "buyMATimeFrame"){
+      buyMATimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAPeriod"){
+      buyMAPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAShift"){
+      buyMAShift = StringToInteger(result[1]);
+   }
+   if (prop == "buyMADirection"){
+      buyMADirection = StringToInteger(result[1]);
+   }
+   if (prop == "buyMABuffer"){
+      buyMABuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAATRTimeFrame"){
+      buyMAATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAATRPeriod"){
+      buyMAATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyMAATRShift"){
+      buyMAATRShift = StringToInteger(result[1]);
+   }   
+   if (prop == "sellMAMode"){
+      sellMAMode = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAType"){
+      sellMAType = StringToInteger(result[1]);
+   }
+   if (prop == "sellMATimeFrame"){
+      sellMATimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAPeriod"){
+      sellMAPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAShift"){
+      sellMAShift = StringToInteger(result[1]);
+   }
+   if (prop == "sellMADirection"){
+      sellMADirection = StringToInteger(result[1]);
+   }
+   if (prop == "sellMABuffer"){
+      sellMABuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAATRTimeFrame"){
+      sellMAATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAATRPeriod"){
+      sellMAATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellMAATRShift"){
+      sellMAATRShift = StringToInteger(result[1]);
+   }  
+   if (prop == "buyStopLossMode"){
+      buyStopLossMode = StringToInteger(result[1]);
+   }
+   if (prop == "buyStopLossBuffer"){
+      buyStopLossBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyStopLossATRTimeFrame"){
+      buyStopLossATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyStopLossATRPeriod"){
+      buyStopLossATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyStopLossATRShift"){
+      buyStopLossATRShift = StringToInteger(result[1]);
+   } 
+   if (prop == "sellStopLossMode"){
+      sellStopLossMode = StringToInteger(result[1]);
+   }
+   if (prop == "sellStopLossBuffer"){
+      sellStopLossBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellStopLossATRTimeFrame"){
+      sellStopLossATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellStopLossATRPeriod"){
+      sellStopLossATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellStopLossATRShift"){
+      sellStopLossATRShift = StringToInteger(result[1]);
+   }  
+   if (prop == "buyTakeProfitMode"){
+      buyTakeProfitMode = StringToInteger(result[1]);
+   }
+   if (prop == "buyTakeProfitBuffer"){
+      buyTakeProfitBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyTakeProfitATRTimeFrame"){
+      buyTakeProfitATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyTakeProfitATRPeriod"){
+      buyTakeProfitATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyTakeProfitATRShift"){
+      buyTakeProfitATRShift = StringToInteger(result[1]);
+   } 
+   if (prop == "sellTakeProfitMode"){
+      sellTakeProfitMode = StringToInteger(result[1]);
+   }
+   if (prop == "sellTakeProfitBuffer"){
+      sellTakeProfitBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellTakeProfitATRTimeFrame"){
+      sellTakeProfitATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellTakeProfitATRPeriod"){
+      sellTakeProfitATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellTakeProfitATRShift"){
+      sellTakeProfitATRShift = StringToInteger(result[1]);
+   } 
+   if (prop == "buyPipStepMode"){
+      buyPipStepMode = StringToInteger(result[1]);
+   }
+   if (prop == "buyPSBuffer"){
+      buyPSBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyPipStepATRTimeFrame"){
+      buyPipStepATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "buyPipStepATRPeriod"){
+      buyPipStepATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "buyPipStepATRShift"){
+      buyPipStepATRShift = StringToInteger(result[1]);
+   } 
+   if (prop == "sellPipStepMode"){
+      sellPipStepMode = StringToInteger(result[1]);
+   }
+   if (prop == "sellPSBuffer"){
+      sellPSBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellPipStepATRTimeFrame"){
+      sellPipStepATRTimeFrame = StringToInteger(result[1]);
+   }
+   if (prop == "sellPipStepATRPeriod"){
+      sellPipStepATRPeriod = StringToInteger(result[1]);
+   }
+   if (prop == "sellPipStepATRShift"){
+      sellPipStepATRShift = StringToInteger(result[1]);
+   }   
+   if (prop == "buyEmptyOrderMode"){
+      buyEmptyOrderMode = StringToInteger(result[1]);
+   }   
+   if (prop == "buyLimitBuffer"){
+      buyLimitBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "buyStopBuffer"){
+      buyStopBuffer = StringToInteger(result[1]);
+   }  
+   if (prop == "sellEmptyOrderMode"){
+      sellEmptyOrderMode = StringToInteger(result[1]);
+   }   
+   if (prop == "sellLimitBuffer"){
+      sellLimitBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "sellStopBuffer"){
+      sellStopBuffer = StringToInteger(result[1]);
+   }
+   if (prop == "useLondonSession"){
+      if (StringToInteger(result[1]) == 1){
+         useLondonSession = true;
+      }else{
+         useLondonSession = false;
+      }
+   }  
+   if (prop == "useAmericaSession"){
+      if (StringToInteger(result[1]) == 1){
+         useAmericaSession = true;
+      }else{
+         useAmericaSession = false;
+      }
+   }
+   
+}
+
+void readFile(){
+   //--- open the file
+   //Print ("Trying to open file...");
+   ResetLastError();
+   int file_handle=FileOpen(InpDirectoryName+"//"+InpFileName, FILE_READ|FILE_ANSI, ';');
+   if(file_handle!=INVALID_HANDLE)
+     {
+      int    str_size;
+      string str;
+            
+      //--- read data from the file
+      while(!FileIsEnding(file_handle))
+        {
+         //--- find out how many symbols are used for writing the time
+         str_size=FileReadInteger(file_handle,INT_VALUE);
+         //--- read the string
+         str=FileReadString(file_handle,str_size);
+         //--- print the string
+         //Print(str);
+         processProperty(str);
+        }
+      //--- close the file
+      FileClose(file_handle);
+      //PrintFormat("Data is read, %s file is closed",InpFileName);
+     }
+   else
+      PrintFormat("Failed to open %s file, Error code = %d",InpFileName,GetLastError());
 }
