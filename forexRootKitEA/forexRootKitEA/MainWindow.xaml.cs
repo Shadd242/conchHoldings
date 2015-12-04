@@ -1470,8 +1470,11 @@ namespace forexRootKitEA
             }
             catch(Exception ex)
             {
-                readConfig(@"../../files/default.txt");
-                txtboxConfigPath.Text = @"../../files/default.txt";
+                //readConfig(@"../../files/default.txt");
+                //txtboxConfigPath.Text = @"../../files/default.txt";
+                string defaultPath = @"C:/Users/Rashad/AppData/Roaming/MetaQuotes/Terminal/46A834A4BD020127C05B0DA2582F8F5C/MQL4/Files/EURUSD.txt";
+                readConfig(defaultPath);
+                txtboxConfigPath.Text = defaultPath;
                 Debug.WriteLine(ex.Message);
             }
             
@@ -1483,6 +1486,11 @@ namespace forexRootKitEA
             string key = configuration[0];
             string val = configuration[1];
             setValues(key, val);
+
+            Person p1 = new Person();
+            p1.name = "the";
+            Person.nameStatic = "newval";
+
         }
 
         void setTimeFrame(Controls.TimeFrameControl inCTFC, string inValue)

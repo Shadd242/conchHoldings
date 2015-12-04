@@ -176,6 +176,7 @@
     <Compile Include="Controls\OrderTypes.xaml.cs">
       <DependentUpon>OrderTypes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -15,6 +15,8 @@ int buyRiskStep = 1000;//buyRiskStep in dollars
 int sellRiskStep = 1000;//sellRiskStep in dollars
 double maxLotSize = 20;
 
+string researchSignal = "";
+
 string PivotPointSectionStart = "----------------PIVOT POINT-------------";
 int buyPivotTimeFrame = PERIOD_D1;//pivotTimeFrame | 1440 - PERIOD_D1 | 60 - PERIOD_H1 
 string buyPivotPointSectionStart = "----------------buy-------------";
@@ -164,8 +166,16 @@ datetime americaSessionStart = 0;
 datetime americaSessionEnd=0;
 bool inAmericaSession = false;
 
+string _canOpenBuy = "";
+string _buyPivotPointLogic = "";
+string _buyMALogic = "";
+
+string _canOpenSell = "";
+string _sellPivotPointLogic = "";
+string _sellMALogic = "";
+
 string InpFileName="Sym.txt"; // file name
-input string InpDirectoryName="Data"; // directory name
+//input string InpDirectoryName="C:\\Users\\Rashad\\Documents\\comms"; // directory name C:\Users\Rashad\Documents\comms
 string sym;
 int bars;
 void OnTick()
@@ -180,6 +190,8 @@ void OnTick()
       getBuyPivots();
       getSellPivots();
    }
+   readFile(sym + "-PatResult.txt");
+   saveCurrentPattern(10);
    barTime = Time[0];
    londonSessionStart = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + londonSessionStartString);
    londonSessionEnd = StrToTime(StringSubstr(TimeToStr(barTime),0,11) + londonSessionEndString);
@@ -189,11 +201,27 @@ void OnTick()
    sellPivotPointLine = getSellPivotValue(sellPivotPointLineIndex);
    inLondonSession = isInSession(londonSessionStart,londonSessionEnd,useLondonSession);
    inAmericaSession = isInSession(americaSessionStart,americaSessionEnd,useAmericaSession);
-   if (canOpenBuy() &&
-       buyPivotPointLogic() && 
-       buyMALogic() &&
+   
+   _canOpenBuy = canOpenBuy();
+   _buyPivotPointLogic = buyPivotPointLogic();
+   _buyMALogic = buyMALogic();
+   
+   _canOpenSell = canOpenSell();
+   _sellPivotPointLogic = sellPivotPointLogic();
+   _sellMALogic = sellMALogic();
+   
+   if (_canOpenBuy == true &&
+       _buyPivotPointLogic == true && 
+       _buyMALogic == true &&
        inLondonSession == false &&
-       inAmericaSession == false){
+       inAmericaSession == false &&
+       researchSignal == "buy"
+       ){
+       
+      //Print("canOpenBuy = " + _canOpenBuy);
+      //Print("buyPivotPointLogic = " + _buyPivotPointLogic);
+      //Print("buyMALogic = " + _buyMALogic);
+   
       switch(buyEmptyOrderMode){
          case 1:
             if(getBuyTradeCount(OP_BUYLIMIT) == 0){
@@ -214,11 +242,13 @@ void OnTick()
             break;
       }
    }
-   if (canOpenSell() &&
-       sellPivotPointLogic() &&
-       sellMALogic() &&
-       isInSession(londonSessionStart,londonSessionEnd,useLondonSession) == false &&
-       isInSession(americaSessionStart,americaSessionEnd,useAmericaSession) == false){
+   if (canOpenSell() == true &&
+       sellPivotPointLogic() == true &&
+       sellMALogic() == true &&
+       inLondonSession == false &&
+       inAmericaSession == false &&
+       researchSignal == "sell"
+       ){
       switch(sellEmptyOrderMode){
          case 1:
             if(getSellTradeCount(OP_SELLLIMIT) == 0){
@@ -252,6 +282,7 @@ void OnTick()
       closeSellOrdersInLoss();
    }
    if (buyTakeProfitMode > -1){
+      Print("buyTakeProfitMode= " + buyTakeProfitMode);
       closeBuyOrdersInProfit();
       closeBuyOrdersInLoss();
    }
@@ -519,10 +550,10 @@ bool canOpenSell(){
 bool canOpenSell(double _sell_ps, double sell_price){
    double sell_psPoint = _sell_ps;// * Point; 
    if (MathAbs(Bid - sell_price) > sell_psPoint){
-      Print("canOpenSell: " + IntegerToString(true));
+      //Print("canOpenSell: " + IntegerToString(true));
       return true;
    }
-   Print("canOpenSell: " + IntegerToString(false));
+   //Print("canOpenSell: " + IntegerToString(false));
    return false;
 }
 
@@ -547,16 +578,18 @@ bool canOpenBuy(){
 bool canOpenBuy(double _buy_ps, double buy_price){
    double buy_psPoint = _buy_ps;// * Point;
    if (MathAbs(Ask - buy_price) > buy_psPoint){
-      Print("canOpenBuy: " + IntegerToString(true));
+      //Print("canOpenBuy: " + IntegerToString(true));
       return true;
    }
-   Print("canOpenBuy: " + IntegerToString(false));
+   //Print("canOpenBuy: " + IntegerToString(false));
    return false;
 }
-
+double toBuyTP = 0;
+double buyTarget = 0;
 void closeBuyOrdersInProfit() {
     RefreshRates();
     int totalOrders = OrdersTotal();
+    Print("Closing orders in profit");
     for(int i = 0; i < totalOrders; i++) {
         double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
         if (OrderType() == OP_BUY && OrderSymbol() == Symbol()) {
@@ -566,6 +599,8 @@ void closeBuyOrdersInProfit() {
             double takeprofit;
             bool timeToClose = false;
             takeprofit = OrderOpenPrice() + GetBuyTakeProfit(0,1);
+            toBuyTP = NormalizeDouble((takeprofit - Bid) / UsePoint,5);
+            buyTarget = takeprofit;
             if (Bid >= takeprofit) {
                 closed = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Violet);
                 if (!closed) {
@@ -577,6 +612,8 @@ void closeBuyOrdersInProfit() {
     //return(0);
 }
 
+double toSellTP = 0;
+double sellTarget = 0;
 void closeSellOrdersInProfit() {
     RefreshRates();
     int totalOrders = OrdersTotal();
@@ -587,6 +624,8 @@ void closeSellOrdersInProfit() {
             RefreshRates();
             bool closed = false;
             double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0,1);
+            toSellTP = NormalizeDouble((Ask - takeprofit) / UsePoint,5);
+            sellTarget = takeprofit;
             if (Ask <= takeprofit) {
                closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
                if (!closed) {
@@ -856,6 +895,8 @@ bool buyPivotPointLogic(){
    if (buyPivotPointMode < 0)
       return true;
    if (checkDirection(buyPivotDirection,buyPivotPointLine,Ask)){
+      //Print("checking direction...");
+      //Print("buyPivotPointMode... " + buyPivotPointMode);
       switch(buyPivotPointMode){
          case 0:
             if(priceDiff > (buyPivotPointBuffer * UsePoint)){
@@ -1083,14 +1124,43 @@ void hud() {
         
         "useLondonSession = " + IntegerToString(useLondonSession) + "\n" +
         "useAmericaSession = " + IntegerToString(useAmericaSession) + "\n" +**/
+        
+        "=====Misc====" + "\n" +
+        "inLondonSession = " + inLondonSession + "\n" +
+        "inAmericaSession = " + inAmericaSession + "\n" +
+        "researchSignal = " + researchSignal + "\n" + 
+        "buyPivotPointMode = " + buyPivotPointMode + "\n" +
               
+        "=====Misc====" + "\n\n" +
+        
+        "=====Buy====" + "\n" +
+        "canOpenBuy = " + _canOpenBuy + "\n" +
+        "buyPivotPointLogic = " + _buyPivotPointLogic + "\n" +
+        "_buyMALogic = " + _buyMALogic + "\n"
+        "=====Buy====" + "\n\n" +  
+        
+        "=====Sell====" + "\n" +
+        "canOpenSell = " + _canOpenSell + "\n" +
+        "sellPivotPointLogic = " + _sellPivotPointLogic + "\n" +
+        "sellMALogic = " + _sellMALogic + "\n" +
+        "=====Sell====" + "\n\n" +
+        
+        "=====TP====" + "\n" +              
+        "buyTakeProfitMode = " + buyTakeProfitMode + "\n" +
+        "buyTakeProfitBuffer = " + buyTakeProfitBuffer + "\n" +
+        "sellTakeProfitMode = " + sellTakeProfitMode + "\n" +
+        "sellTakeProfitBuffer = " + sellTakeProfitBuffer + "\n" +
+        "toBuyTP = " + toBuyTP + "\n" +
+        "buyTarget = " + buyTarget + "\n" + 
+        "toSellTP = " + toSellTP + "\n" +
+        "sellTarget = " + sellTarget + "\n" +    
+        "=====TP====" + "\n\n" +      
+        
         "bar Time = " + TimeToStr(barTime) + "\n" +
         "londonSessionStart = " + TimeToStr(londonSessionStart) + "\n" + 
-        "londonSessionEnd = " + TimeToStr(londonSessionEnd) + "\n" +
-        "inLondonSession = " + IntegerToString(inLondonSession) + "\n" + 
+        "londonSessionEnd = " + TimeToStr(londonSessionEnd) + "\n" +         
         "americaSessionStart = " + TimeToStr(americaSessionStart) + "\n" + 
-        "americaSessionEnd = " + TimeToStr(americaSessionEnd) + "\n" +
-        "AmericaSession = " + IntegerToString(inAmericaSession) + "\n" +
+        "americaSessionEnd = " + TimeToStr(americaSessionEnd) + "\n" +        
         "enabled = " + IntegerToString(IsExpertEnabled()) + "\n" +
         "trade allowed = " + IntegerToString(IsTradeAllowed()) + "\n" +
         "optimization = " + IntegerToString(IsOptimization()) + "\n" +
@@ -1107,8 +1177,6 @@ void hud() {
         "ask = "  + DoubleToStr(Ask, 4), "\n", "\n",
         "spread = " + DoubleToStr((Ask-Bid)*10000, 1), "\n\n",
         "tc = " + IntegerToString(getTradeCount()) + ", buy tc = " + IntegerToString(getBuyTradeCount()) + ", sell tc = " + IntegerToString(getSellTradeCount()), "\n\n",
-        "sellTakeProfitMode = " + IntegerToString(sellTakeProfitMode), "\n",
-        "buyTakeProfitMode = " + IntegerToString(buyTakeProfitMode), "\n",
         "sellStopLossMode = " + IntegerToString(sellStopLossMode), "\n",
         "buystopLossMode = " + IntegerToString(buyStopLossMode), "\n\n",
         "buy_tp amount = $" + DoubleToStr(buy_tp * buy_lots, 2) + ", sell_tp amount = $" + DoubleToStr(sell_tp * sell_lots, 2), "\n",
@@ -1126,6 +1194,7 @@ double getSMA (int inTimeframe, int inSmaPeriod, int inSmaShift, int inMode){
 }
 
 bool isInSession(datetime inSessionStart, datetime inSessionEnd, bool inUseSession){
+   return false;
    if(inUseSession == false)
       return true;
    if (barTime > inSessionStart &&
@@ -1136,7 +1205,7 @@ bool isInSession(datetime inSessionStart, datetime inSessionEnd, bool inUseSessi
 }
 
 void processProperty(string stringToParse){
-   Print("processing property");
+   //Print("processing property");
    //Print("...processProperty Open...");
    string to_split=stringToParse;   // A string to split into substrings
    string sep="=";                // A separator as a character
@@ -1316,6 +1385,7 @@ void processProperty(string stringToParse){
    }
    if (prop == "buyTakeProfitBuffer"){
       buyTakeProfitBuffer = StringToInteger(result[1]);
+      //Print("buyTakeProfitBuffer = " + buyTakeProfitBuffer);
    }
    if (prop == "buyTakeProfitATRTimeFrame"){
       buyTakeProfitATRTimeFrame = StringToInteger(result[1]);
@@ -1403,14 +1473,18 @@ void processProperty(string stringToParse){
          useAmericaSession = false;
       }
    }
+   if (prop == "researchSignal") {
+      researchSignal = result[1];
+   }
    
 }
 
 void readFile(){
    //--- open the file
    //Print ("Trying to open file...");
+   //Print ("path: " + InpDirectoryName + "\\" +InpFileName);
    ResetLastError();
-   int file_handle=FileOpen(InpDirectoryName+"//"+InpFileName, FILE_READ|FILE_ANSI, ';');
+   int file_handle=FileOpen(InpFileName, FILE_READ|FILE_ANSI, ';');
    if(file_handle!=INVALID_HANDLE)
      {
       int    str_size;
@@ -1433,4 +1507,74 @@ void readFile(){
      }
    else
       PrintFormat("Failed to open %s file, Error code = %d",InpFileName,GetLastError());
+}
+
+void readFile(string file_name){
+   //--- open the file
+   //Print ("Trying to open file...");
+   //Print ("path: " + InpDirectoryName + "\\" +InpFileName);
+   ResetLastError();
+   int file_handle=FileOpen(file_name, FILE_READ|FILE_ANSI, ';');
+   if(file_handle!=INVALID_HANDLE)
+     {
+      int    str_size;
+      string str;
+            
+      //--- read data from the file
+      while(!FileIsEnding(file_handle))
+        {
+         //--- find out how many symbols are used for writing the time
+         str_size=FileReadInteger(file_handle,INT_VALUE);
+         //--- read the string
+         str=FileReadString(file_handle,str_size);
+         //--- print the string
+         //Print(str);
+         processProperty(str);
+        }
+      //--- close the file
+      FileClose(file_handle);
+      //PrintFormat("Data is read, %s file is closed",InpFileName);
+     }
+   else
+      PrintFormat("Failed to open %s file, Error code = %d",InpFileName,GetLastError());
+}
+
+int getHandle(string fileName)
+{
+   //Open file/////////////////////////////////////////////////////////////////////////////////////////////////////////
+   int handle=FileOpen(fileName,FILE_CSV|FILE_READ|FILE_WRITE,',');
+   if(handle<1)
+   {
+      Comment("File data1.csv not found, the last error is ", GetLastError());
+      return(false);
+   }
+   else
+   {
+      //Comment("Ok");
+      //FileWrite(handle, "Time","Bid","Ask");
+      //Comment("1");
+   }
+   return(handle);
+}
+
+void fileWrite(int handle, string _date, string _time, string _open, string _high, string _low, string _close, string _volume){
+   FileSeek(handle, 0, SEEK_END);
+   FileWrite(handle, _date, _time, _open, _high, _low, _close, _volume);
+}
+
+void saveCurrentPattern(int length){ 
+   string patterFile = sym + "-currentPattern.txt";
+   FileDelete(patterFile);
+   int handle = getHandle(patterFile);
+   for (int x=length;x>0;x--){
+      string _date = TimeToStr(iTime(NULL,0,x),TIME_DATE);
+      string _time = TimeToStr(iTime(NULL,0,x),TIME_MINUTES);
+      string _open = iOpen(NULL,0,x);
+      string _high = iHigh(NULL,0,x);
+      string _low = iLow(NULL,0,x);
+      string _close = iClose(NULL,0,x);
+      string _volume = iVolume(NULL,0,x);
+      fileWrite(handle,_date,_time,_open,_high,_low,_close,_volume);
+   }
+   FileClose(handle);
 }
