@@ -178,6 +178,10 @@ string InpFileName="Sym.txt"; // file name
 //input string InpDirectoryName="C:\\Users\\Rashad\\Documents\\comms"; // directory name C:\Users\Rashad\Documents\comms
 string sym;
 int bars;
+
+bool buyOpenOnBar = false;
+bool sellOpenOnBar = false;
+
 void OnTick()
   {
 //----  
@@ -185,8 +189,10 @@ void OnTick()
    StringReplace(sym, "i", "");
    InpFileName = sym + ".txt";
    if (bars != Bars){
-      readFile();
+      buyOpenOnBar = false;
+      sellOpenOnBar = false;
       bars = Bars;
+      readFile();
       getBuyPivots();
       getSellPivots();
    }
@@ -215,7 +221,8 @@ void OnTick()
        _buyMALogic == true &&
        inLondonSession == false &&
        inAmericaSession == false &&
-       researchSignal == "buy"
+       researchSignal == "buy" &&
+       buyOpenOnBar == false
        ){
        
       //Print("canOpenBuy = " + _canOpenBuy);
@@ -247,7 +254,8 @@ void OnTick()
        sellMALogic() == true &&
        inLondonSession == false &&
        inAmericaSession == false &&
-       researchSignal == "sell"
+       researchSignal == "sell" &&
+       sellOpenOnBar == false
        ){
       switch(sellEmptyOrderMode){
          case 1:
@@ -275,20 +283,32 @@ void OnTick()
    
    //closeBuyOrdersInProfit();
    //closeBuyOrdersInLoss();
-      
    
-   if (sellTakeProfitMode > -1){
+   //drawLine("avgNegOutcome",negOutcomePrice,48,clrRed); 
+   //drawLine("avgPosOutcome",posOutcomePrice,48,clrBlue);
+   
+   if (sellTakeProfitMode > -1 && sellOpenOnBar == false
+   ){
       closeSellOrdersInProfit();
       closeSellOrdersInLoss();
    }
-   if (buyTakeProfitMode > -1){
+   if (buyTakeProfitMode > -1 && buyOpenOnBar == false
+   ){
       Print("buyTakeProfitMode= " + buyTakeProfitMode);
       closeBuyOrdersInProfit();
       closeBuyOrdersInLoss();
    }
    hud();
    
-  }
+   //if (bars != Bars){
+   //   Sleep(30000);
+   //   bars = Bars;
+   //}
+}
+  
+  double posOutcomePrice = 0;
+  double negOutcomePrice = 0;
+  
 //+------------------------------------------------------------------+
 double PipPoint(string Currency)
 {
@@ -371,6 +391,7 @@ double GetBuyTakeProfit(double OpenPrice, int sender){
          }
          if (sender == 1){
             return (buyTakeProfitBuffer * UsePoint);
+            //return getPosAvgOutcomePrice(OpenPrice);
          }
       case 1:
          if (sender == 0){
@@ -397,6 +418,7 @@ double GetSellTakeProfit(double OpenPrice, int sender){
          }
          if (sender == 1){
             return (sellTakeProfitBuffer * UsePoint);
+            //return getNegAvgOutcomePrice(OpenPrice);
          }
       case 1:
          if (sender == 0){
@@ -470,6 +492,7 @@ void openBuy(int inBuyOrderType) {
    int ticket = OrderSend(Symbol(), inBuyOrderType, buy_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 10000, 0, Blue);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
+          buyOpenOnBar = true;
           Print("BUY order opened : lots = " + DoubleToString(buy_lots), OrderOpenPrice());
       }
    } else {
@@ -496,6 +519,7 @@ void openSell(int inSellOrderType) {
    int ticket = OrderSend(Symbol(), inSellOrderType, sell_lots, orderPrice, UseSlippage, stoploss, takeprofit, "ForexRootkitBandsDual v." + DoubleToString(version), 20000, 0, Red);
    if (ticket > 0) {
       if (OrderSelect(ticket, SELECT_BY_TICKET, MODE_TRADES)) {
+         sellOpenOnBar = true;
          Print("SELL order opened : lots = " + DoubleToString(sell_lots), OrderOpenPrice());
       }
    } else {
@@ -636,6 +660,26 @@ void closeSellOrdersInProfit() {
     }
 }
 
+void closeAllSellOrders() {
+    RefreshRates();
+    int totalOrders = OrdersTotal();
+    for(int i = 0; i < totalOrders; i++) {
+        double os =OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderType() == OP_SELL && OrderSymbol() == Symbol()) {
+            while (IsTradeContextBusy()) Sleep(10);
+            RefreshRates();
+            bool closed = false;
+            double takeprofit = OrderOpenPrice() - GetSellTakeProfit(0,1);
+            toSellTP = NormalizeDouble((Ask - takeprofit) / UsePoint,5);
+            sellTarget = takeprofit;
+            closed = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Violet);
+            if (!closed) {
+                Print("Error closing order in profit - SELL: " + IntegerToString(OrderTicket()) + ", lots: " + DoubleToString(OrderLots()) + " " + IntegerToString(GetLastError()));   
+            }
+        }
+    }
+}
+
 void closeSellOrdersInLoss() {
     RefreshRates();
     int totalOrders = OrdersTotal();
@@ -676,6 +720,27 @@ void closeBuyOrdersInLoss() {
                 if (!closed) {
                     Print("Error closing order in profit - BUY: " + IntegerToString(OrderTicket()) + ", lots: " + DoubleToString(OrderLots()) + " " + IntegerToString(GetLastError()));   
                 }
+            }
+        }
+    }
+}
+
+void closeAllBuyOrders() {
+    RefreshRates();
+    int totalOrders = OrdersTotal();
+    for(int i = 0; i < totalOrders; i++) {
+        double os = OrderSelect(i, SELECT_BY_POS, MODE_TRADES);
+        if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY || 
+                                          OrderType() == OP_BUYLIMIT ||
+                                          OrderType() == OP_BUYSTOP)) {
+            while (IsTradeContextBusy()) Sleep(10);
+            RefreshRates();
+            bool closed = false;
+            bool timeToClose = false;
+            double stoploss = OrderOpenPrice() - GetBuyStopLoss(0,1);
+            closed = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Violet);
+            if (!closed) {
+              Print("Error closing order in profit - BUY: " + IntegerToString(OrderTicket()) + ", lots: " + DoubleToString(OrderLots()) + " " + IntegerToString(GetLastError()));   
             }
         }
     }
@@ -1125,11 +1190,19 @@ void hud() {
         "useLondonSession = " + IntegerToString(useLondonSession) + "\n" +
         "useAmericaSession = " + IntegerToString(useAmericaSession) + "\n" +**/
         
+        "Ask = " + Ask + "\n" +
+        "Bid = " + Bid + "\n" +
         "=====Misc====" + "\n" +
         "inLondonSession = " + inLondonSession + "\n" +
         "inAmericaSession = " + inAmericaSession + "\n" +
         "researchSignal = " + researchSignal + "\n" + 
         "buyPivotPointMode = " + buyPivotPointMode + "\n" +
+        
+        "avgPosOutcome = " + avgPosOutcome + "\n" +
+        "avgPosOutcomePrice = " + posOutcomePrice + "\n" +
+        
+        "avgNegOutcome = " + avgNegOutcome + "\n" +
+        "avgNegOutcomePrice = " + negOutcomePrice + "\n" +
               
         "=====Misc====" + "\n\n" +
         
@@ -1477,7 +1550,18 @@ void processProperty(string stringToParse){
       researchSignal = result[1];
    }
    
+   if (prop == "avgNegOutcome") {
+      avgNegOutcome = result[1];
+   }
+   
+   if (prop == "avgPosOutcome") {
+      avgPosOutcome = result[1];
+   }
+   
 }
+
+string avgNegOutcome = "";
+string avgPosOutcome = "";
 
 void readFile(){
    //--- open the file
@@ -1577,4 +1661,12 @@ void saveCurrentPattern(int length){
       fileWrite(handle,_date,_time,_open,_high,_low,_close,_volume);
    }
    FileClose(handle);
+}
+
+double getPosAvgOutcomePrice(double inPrice){
+    return (StringToDouble(avgPosOutcome) / 100 * inPrice) + inPrice;
+}
+
+double getNegAvgOutcomePrice(double inPrice){
+    return inPrice + (((StringToDouble(avgNegOutcome) / 100) * inPrice));
 }
