@@ -175,6 +175,8 @@ namespace forexRootKitEA
         string sellRiskStep;
         string maxLotSize;
 
+        string basePath = @"C:/Users/Rashad/AppData/Roaming/MetaQuotes/Terminal/46A834A4BD020127C05B0DA2582F8F5C";
+
         string buyPivotPointBuffer;
         string buyPivotPointATRPeriod;
         string buyPivotPointATRShift;
@@ -654,6 +656,8 @@ namespace forexRootKitEA
              
             InitializeComponent();
 
+            cmbbxCurrentSymbol.SelectedIndex = 0;
+
             #region PIVOT POINT
             setTimeFrameGroupName(buy.pivotPoint.timeFrame, buyPivotTimeFrameString);
             setPivotPointGroupName(buy.pivotPoint.pivotPoint, buyPivotPointLineIndexString);
@@ -873,16 +877,21 @@ namespace forexRootKitEA
                 file.WriteLine("useLondonSession" + "=" + useLondonSession);
                 file.WriteLine("useAmericaSession" + "=" + useAmericaSession);
             }
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(basePath + envString + cmbbxCurrentSymbol.Text +"-research.txt"))
+            {
+                file.WriteLine(research.sldrStartYear.Value + "," + research.sldrStartYear.Value + "," + research.sldrMatchThreshold.Value + "," + research.sldrTradeThreshold.Value +
+                    "," + research.sldrPage.Value + "," + research.sldrRpp.Value + "," + research.sldrAverageRangeLenth.Value);
+            }
         }
 
         void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            saveConfig(txtboxConfigPath.Text);
+            saveConfig(getPath());
         }
 
         void btnGet_Click(object sender, RoutedEventArgs e)
         {
-            readConfig(txtboxConfigPath.Text);
+            readConfig(getPath());
         }
 
         void tbtnAmerica_Unchecked(object sender, RoutedEventArgs e)
@@ -1452,6 +1461,8 @@ namespace forexRootKitEA
             Debug.WriteLine("---value set");
         }
 
+        string envString = "";
+
         private void readConfig(string pathToConfig)
         {
             try
@@ -1466,18 +1477,23 @@ namespace forexRootKitEA
                     counter++;
                 }
                 file.Close();
-                txtboxConfigPath.Text = pathToConfig;
+                //txtboxConfigPath.Text = pathToConfig;
             }
             catch(Exception ex)
             {
                 //readConfig(@"../../files/default.txt");
                 //txtboxConfigPath.Text = @"../../files/default.txt";
-                string defaultPath = @"C:/Users/Rashad/AppData/Roaming/MetaQuotes/Terminal/46A834A4BD020127C05B0DA2582F8F5C/MQL4/Files/EURUSD.txt";
-                readConfig(defaultPath);
-                txtboxConfigPath.Text = defaultPath;
+                //defaultPath = @"C:/Users/Rashad/AppData/Roaming/MetaQuotes/Terminal/46A834A4BD020127C05B0DA2582F8F5C" + envString + cmbbxCurrentSymbol.Text + ".txt";
+                readConfig(getPath());
+                //txtboxConfigPath.Text = defaultPath;
                 Debug.WriteLine(ex.Message);
             }
             
+        }
+
+        private string getPath()
+        {
+            return @"C:/Users/Rashad/AppData/Roaming/MetaQuotes/Terminal/46A834A4BD020127C05B0DA2582F8F5C" + envString + cmbbxCurrentSymbol.Text + ".txt";
         }
 
         private void processConfigLine(string line)
@@ -1492,6 +1508,8 @@ namespace forexRootKitEA
             Person.nameStatic = "newval";
 
         }
+
+
 
         void setTimeFrame(Controls.TimeFrameControl inCTFC, string inValue)
         {
@@ -1651,5 +1669,75 @@ namespace forexRootKitEA
             ce.orderTypes.Market.Checked += val_Changed;
         }
 
+        private void envChanged(object sender, RoutedEventArgs e)
+        {
+            if (rbtnDev != null)
+            {
+                string devString = @"/tester/files/";
+                if (rbtnDev.IsChecked == true)
+                {
+                    envString = devString;
+                }
+            }
+
+            if (rbtnProd != null)
+            {
+                string prodString = @"/MQL4/Files/";
+                if (rbtnProd.IsChecked == true)
+                {
+                    envString = prodString;
+                }
+            }
+
+        }
+
+        private void btndefault_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "default.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnsell1_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "sell1.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnsell2_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "sell2.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnsell3_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "sell3.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnbuy1_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "buy1.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnbuy2_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "buy2.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
+
+        private void btnbuy3_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultPath = basePath + envString + "buy3.txt";
+            readConfig(defaultPath);
+            saveConfig(getPath());
+        }
     }
 }

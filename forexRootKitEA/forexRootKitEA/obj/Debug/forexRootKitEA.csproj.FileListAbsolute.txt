@@ -88,3 +88,5 @@ C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj
 C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj\Debug\forexRootKitEA.g.resources
 C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj\Debug\forexRootKitEA.Properties.Resources.resources
 C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj\Debug\forexRootKitEA.csproj.GenerateResource.Cache
+C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj\Debug\Controls\Research.g.cs
+C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\obj\Debug\Controls\Research.baml

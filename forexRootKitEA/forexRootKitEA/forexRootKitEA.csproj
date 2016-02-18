@@ -84,6 +84,9 @@
     <Compile Include="Controls\PivotPointSelectorControl.xaml.cs">
       <DependentUpon>PivotPointSelectorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Research.xaml.cs">
+      <DependentUpon>Research.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Sessions.xaml.cs">
       <DependentUpon>Sessions.xaml</DependentUpon>
     </Compile>
@@ -128,6 +131,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PivotPointSelectorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Research.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

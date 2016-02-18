@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="forexRootKitEA.Controls.Research"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:forexRootKitEA.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <WrapPanel >
+            <Label Content="Start Year: "/>
+            <Slider x:Name="sldrStartYear" Minimum="2014" Maximum="2014" Width="50" Value="2014" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrStartYear, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Start End: "/>
+            <Slider x:Name="sldrEndYear" Minimum="2014" Maximum="2014" Width="50" Value="2014" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrEndYear, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Match Threshold: "/>
+            <Slider x:Name="sldrMatchThreshold" Minimum="0" Maximum="100" Value="50" Width="100" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrMatchThreshold, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Trade Threshold: "/>
+            <Slider x:Name="sldrTradeThreshold" Minimum="50" Maximum="100" Value="50" Width="100" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrTradeThreshold, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Page: "/>
+            <Slider x:Name="sldrPage" Minimum="1" Maximum="1" Width="50" Value="1" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrPage, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Rpp: "/>
+            <Slider x:Name="sldrRpp" Minimum="1" Maximum="100" Value="100" Width="100" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrRpp, Path=Value}"/>
+        </WrapPanel>
+        <WrapPanel>
+            <Label Content="Average Range Length: "/>
+            <Slider x:Name="sldrAverageRangeLenth" Minimum="5" Maximum="50" Value="10" Width="100" IsSnapToTickEnabled="True" TickFrequency="1"/>
+            <Label Content="{Binding ElementName=sldrAverageRangeLenth, Path=Value}"/>
+        </WrapPanel>
+        
+        
+
+    </StackPanel>
+</UserControl>

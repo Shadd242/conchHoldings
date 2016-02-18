@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Rashad\Documents\GitHub\conchHoldings\forexRootKitEA\forexRootKitEA\App.xaml
-16-2107966182
+17-1833300789
 
-21-1191270000
+22909067645
 16801884190
-Controls\ATR.xaml;Controls\direction.xaml;Controls\EOM.xaml;Controls\MA.xaml;Controls\MAMode.xaml;Controls\Orders.xaml;Controls\PipStep.xaml;Controls\PivotPointSelectorControl.xaml;Controls\Sessions.xaml;Controls\spacingMode.xaml;Controls\StopLoss.xaml;Controls\TimeFrameControl.xaml;Controls\PivotPoint.xaml;MainWindow.xaml;Controls\TakeProfit.xaml;Controls\OrderTypes.xaml;
+Controls\ATR.xaml;Controls\direction.xaml;Controls\EOM.xaml;Controls\MA.xaml;Controls\MAMode.xaml;Controls\Orders.xaml;Controls\PipStep.xaml;Controls\PivotPointSelectorControl.xaml;Controls\Research.xaml;Controls\Sessions.xaml;Controls\spacingMode.xaml;Controls\StopLoss.xaml;Controls\TimeFrameControl.xaml;Controls\PivotPoint.xaml;MainWindow.xaml;Controls\TakeProfit.xaml;Controls\OrderTypes.xaml;
 
 False
 

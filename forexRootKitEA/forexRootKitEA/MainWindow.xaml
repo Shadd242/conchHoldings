@@ -12,27 +12,27 @@
         <TabControl Grid.Row="0">
             <TabItem Header="Money Management">
                 <StackPanel>
-                    <WrapPanel HorizontalAlignment="Center">
-                        <Label Content="Slippage in Pips:" />
-                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="Slippage"/>
-                    </WrapPanel>
-                    <WrapPanel HorizontalAlignment="Center">
-                        <Label Content="Min Lot Size:" />
-                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MinLotSize"/>
-                    </WrapPanel>
-                    <WrapPanel HorizontalAlignment="Center">
-                        <Label Content="Max Lot Size:" />
-                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MaxLotSize"/>
-                    </WrapPanel>
-                    <WrapPanel HorizontalAlignment="Center">
-                        <Label Content="Buy Risk Step in dollars:" />
-                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="BuyRiskStep"/>
-                    </WrapPanel>
-                    <WrapPanel HorizontalAlignment="Center">
-                        <Label Content="Sell Risk Step in dollars:" />
-                        <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="SellRiskStep"/>
-                    </WrapPanel>
-                </StackPanel>
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Label Content="Slippage in Pips:" />
+                            <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="Slippage"/>
+                        </WrapPanel>
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Label Content="Min Lot Size:" />
+                            <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MinLotSize"/>
+                        </WrapPanel>
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Label Content="Max Lot Size:" />
+                            <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MaxLotSize"/>
+                        </WrapPanel>
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Label Content="Buy Risk Step in dollars:" />
+                            <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="BuyRiskStep"/>
+                        </WrapPanel>
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Label Content="Sell Risk Step in dollars:" />
+                            <TextBox HorizontalContentAlignment="Center" MinWidth="50" VerticalAlignment="Center" HorizontalAlignment="Center" Name="SellRiskStep"/>
+                        </WrapPanel>
+                    </StackPanel>
             </TabItem>
             <TabItem Header="Trading Session">
                 <dc:Sessions x:Name="sessions"/>
@@ -44,12 +44,46 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <Label Content="Path to Config: " HorizontalAlignment="Center" HorizontalContentAlignment="Center"/>
-                        <TextBox MinWidth="250" MaxWidth="250" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Name="txtboxConfigPath" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <!--<TextBox MinWidth="250" MaxWidth="250" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Name="txtboxConfigPath" VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
                         <Button Name="btnSave" Content="Save" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
                         <Button Name="btnGet" Content="Get" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                        <ComboBox Name="cmbbxCurrentSymbol" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <ComboBoxItem>EURAUD</ComboBoxItem>
+                            <ComboBoxItem>EURCHF</ComboBoxItem>
+                            <ComboBoxItem>EURCAD</ComboBoxItem>
+                            <ComboBoxItem>EURUSD</ComboBoxItem>
+                            <ComboBoxItem>USDCAD</ComboBoxItem>
+                            <ComboBoxItem>EURGBP</ComboBoxItem>
+                            <ComboBoxItem>AUDCHF</ComboBoxItem>
+                            <ComboBoxItem>AUDCAD</ComboBoxItem>
+                            <ComboBoxItem>AUDNZD</ComboBoxItem>
+                            <ComboBoxItem>AUDUSD</ComboBoxItem>
+                            <ComboBoxItem>GBPUSD</ComboBoxItem>
+                            <ComboBoxItem>default</ComboBoxItem>
+                            <ComboBoxItem>sell1</ComboBoxItem>
+                            <ComboBoxItem>sell2</ComboBoxItem>
+                            <ComboBoxItem>sell3</ComboBoxItem>
+                            <ComboBoxItem>buy1</ComboBoxItem>
+                            <ComboBoxItem>buy2</ComboBoxItem>
+                            <ComboBoxItem>buy3</ComboBoxItem>
+                        </ComboBox>
+                        <RadioButton Name="rbtnProd" GroupName="Env" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True" Content="Prod" Checked="envChanged"/>
+                        <RadioButton Name="rbtnDev" GroupName="Env" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Dev" Checked="envChanged" Margin="0,0,3,0"/>
+                        <WrapPanel VerticalAlignment="Center">
+                            <Button Content="Default" Name="btndefault" Margin="1" Click="btndefault_Click"/>
+                            <Button Content="sell1" Name="btnsell1" Margin="1" Click="btnsell1_Click"/>
+                            <Button Content="sell2" Name="btnsell2" Margin="1" Click="btnsell2_Click"/>
+                            <Button Content="sell3" Name="btnsell3" Margin="1" Click="btnsell3_Click"/>
+                            <Button Content="buy1" Name="btnbuy1" Margin="1" Click="btnbuy1_Click"/>
+                            <Button Content="buy2" Name="btnbuy2" Margin="1" Click="btnbuy2_Click"/>
+                            <Button Content="buy3" Name="btnbuy3" Margin="1" Click="btnbuy3_Click"/>
+                        </WrapPanel>
                     </StackPanel>
                 </Grid>
                 
+            </TabItem>
+            <TabItem Header="Research">
+                <dc:Research x:Name="research"/>
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1">

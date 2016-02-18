@@ -24,5 +24,6 @@
         <TabItem Header="Empty Order Mode">
             <dc:EOM x:Name="emptyOrderMode"/>
         </TabItem>
+        
     </TabControl>
 </UserControl>
